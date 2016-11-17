@@ -1,9 +1,6 @@
-#include <random>
-#include <functional>
-#include <chrono>
-#include <iostream>
 #include <Quad.h>
 #include <Line.h>
+#include <Random.h>
 
 void Quad::Subdivide(std::vector<Shape>& mesh)
 {
@@ -17,11 +14,8 @@ void Quad::BuildNeighborhood(std::vector<Shape>& mesh) // Add const vector3 &v w
 
 void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
 {
+    Random::Seed();
     enum FloorType { GROUND, FLOOR, ROOF, END };
-
-    std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<double> dist(0.0, 1.0);
-    auto rand = std::bind(dist, generator);
 
     FloorType type = GROUND;
     uint32_t height = 0;
@@ -42,15 +36,15 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
 
                 if (height < minGlobalHeight)
                 {
-                    type = (rand() < 0.95) ? FLOOR : ROOF;
+                    type = (Random.NextDouble() < 0.95) ? FLOOR : ROOF;
                 }
                 else if (height > maxGlobalHeight)
                 {
-                    type = (rand() > 0.95) ? FLOOR : ROOF;
+                    type = (Random.NextDouble() > 0.95) ? FLOOR : ROOF;
                 }
                 else
                 {
-                    type = (rand() < 0.8) ? FLOOR : ROOF;
+                    type = (Random.NextDouble() < 0.8) ? FLOOR : ROOF;
                 }
 
                 break;
