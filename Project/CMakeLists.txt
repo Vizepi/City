@@ -23,4 +23,4 @@ set(SOURCES
 	Src/main.cpp
 )
 
-add_executable(City SOURCES)
+add_executable(City ${SOURCES})
