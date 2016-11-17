@@ -19,7 +19,20 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Lib)
 
+set(SOURCES_TOOLS
+	Include/Vector.h
+)
+source_group("Tools" FILES ${SOURCES_TOOLS})
+
+set(SOURCES_SHAPES
+	Include/Quad.h
+	Include/Triangle.h
+)
+source_group("Shapes" FILES ${SOURCES_SHAPES})
+
 set(SOURCES
+	${SOURCES_TOOLS}
+	${SOURCES_SHAPES}
 	Src/main.cpp
 )
 
