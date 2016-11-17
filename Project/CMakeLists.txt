@@ -30,6 +30,9 @@ source_group("Shapes\\Quad" FILES ${SOURCES_QUAD})
 set(SOURCES_TRIANGLE Src/Triangle.cpp Include/Triangle.h)
 source_group("Shapes\\Triangle" FILES ${SOURCES_TRIANGLE})
 
+set(SOURCES_LINE Src/Line.cpp Include/Line.h)
+source_group("Shapes\\Line" FILES ${SOURCES_LINE})
+
 set(SOURCES_SHAPES
 	Include/Shape.h
 )
@@ -37,6 +40,7 @@ source_group("Shapes" FILES ${SOURCES_SHAPES})
 
 set(SOURCES
 	${SOURCES_TOOLS}
+	${SOURCES_LINE}
 	${SOURCES_SHAPES}
 	${SOURCES_QUAD}
 	${SOURCES_TRIANGLE}
