@@ -50,6 +50,7 @@ set(SOURCES
 	${SOURCES_SHAPES}
 	${SOURCES_QUAD}
 	${SOURCES_TRIANGLE}
+	Include/Setting.h
 	Src/main.cpp
 )
 
