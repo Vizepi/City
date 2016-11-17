@@ -10,7 +10,7 @@ void Quad::BuildNeighborhood(std::vector<Shape>& mesh)
 
 }
 
-void Quad::BuildBuilding(std::ofstream & obj)
+void Quad::BuildBuilding(std::ofstream & obj, uint32_t globalHeight)
 {
 
 }

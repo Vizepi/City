@@ -10,7 +10,7 @@ void Triangle::BuildNeighborhood(std::vector<Shape>& mesh)
 
 }
 
-void Triangle::BuildBuilding(std::ofstream & obj)
+void Triangle::BuildBuilding(std::ofstream & obj, uint32_t globalHeight)
 {
 
 }

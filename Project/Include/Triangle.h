@@ -15,7 +15,7 @@ public:
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
-	virtual void BuildBuilding(std::ofstream& obj);
+	virtual void BuildBuilding(std::ofstream& obj, uint32_t globalHeight);
 
 	inline double Area(void) const
 	{
