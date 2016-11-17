@@ -9,9 +9,10 @@ class Triangle : public Shape
 {
 public:
 
-	inline Triangle(void) : m_a(), m_b(), m_c() {}
-
-	inline Triangle(const Vector2& a, const Vector2& b, const Vector2& c) : m_a(a), m_b(b), m_c(c) {}
+	inline Triangle(void) : Shape(), m_a(), m_b(), m_c() {}
+	inline Triangle(const Vector2& a, const Vector2& b, const Vector2& c) : Shape(), m_a(a), m_b(b), m_c(c) {}
+	inline Triangle(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c() {}
+	inline Triangle(uint64_t seed, const Vector2& a, const Vector2& b, const Vector2& c) : Shape(seed), m_a(a), m_b(b), m_c(c) {}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
