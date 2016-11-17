@@ -20,7 +20,7 @@ public:
 	inline static double NextDouble(void) { return s_instance.m_dist_dbl(s_instance.m_generator); }
 	inline static double NextDouble(double min, double max) { return std::uniform_real_distribution<double>(min, max)(s_instance.m_generator); }
 
-	inline static bool NextBool(void) { return s_instance.m_dist_u64(s_instance.m_generator) % 2; }
+	inline static bool NextBool(void) { return s_instance.m_dist_u64(s_instance.m_generator) % 2 == 0; }
 
 private:
 
