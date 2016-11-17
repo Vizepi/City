@@ -8,14 +8,14 @@ class Quad : public Shape
 {
 public:
 
-	inline Quad()
+	inline Quad(void)
 	{
 
 	}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
-	virtual void BuildBuilding(std::vector<Shape>& mesh);
+	virtual void BuildBuilding(std::ofstream& obj);
 
 	inline double Area(void) const
 	{
@@ -23,10 +23,15 @@ public:
 	}
 
 	// Accessors
-	inline const Vector2 A(void) const { return m_a; }
-	inline const Vector2 B(void) const { return m_b; }
-	inline const Vector2 C(void) const { return m_c; }
-	inline const Vector2 D(void) const { return m_d; }
+	inline const Vector2& A(void) const { return m_a; }
+	inline const Vector2& B(void) const { return m_b; }
+	inline const Vector2& C(void) const { return m_c; }
+	inline const Vector2& D(void) const { return m_d; }
+
+	inline void SetA(const Vector2& a) { m_a = a; }
+	inline void SetB(const Vector2& b) { m_b = b; }
+	inline void SetC(const Vector2& c) { m_c = c; }
+	inline void SetD(const Vector2& d) { m_d = d; }
 
 private:
 

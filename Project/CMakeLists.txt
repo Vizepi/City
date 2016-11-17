@@ -24,16 +24,22 @@ set(SOURCES_TOOLS
 )
 source_group("Tools" FILES ${SOURCES_TOOLS})
 
+set(SOURCES_QUAD Src/Quad.cpp Include/Quad.h)
+source_group("Shapes\\Quad" FILES ${SOURCES_QUAD})
+
+set(SOURCES_TRIANGLE Src/Triangle.cpp Include/Triangle.h)
+source_group("Shapes\\Triangle" FILES ${SOURCES_TRIANGLE})
+
 set(SOURCES_SHAPES
 	Include/Shape.h
-	Include/Quad.h
-	Include/Triangle.h
 )
 source_group("Shapes" FILES ${SOURCES_SHAPES})
 
 set(SOURCES
 	${SOURCES_TOOLS}
 	${SOURCES_SHAPES}
+	${SOURCES_QUAD}
+	${SOURCES_TRIANGLE}
 	Src/main.cpp
 )
 
