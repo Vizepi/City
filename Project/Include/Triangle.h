@@ -22,6 +22,9 @@ public:
 		return abs(Product(m_a - m_b, m_a - m_c)) / 2.0;
 	}
 
+	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize);  }
+	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA);
+
 	// Accessors
 	inline const Vector2& A(void) const { return m_a; }
 	inline const Vector2& B(void) const { return m_b; }

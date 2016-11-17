@@ -19,6 +19,8 @@ public:
 	inline void SetA(const Vector2& a) { m_a = a; }
 	inline void SetB(const Vector2& b) { m_b = b; }
 
+	static Vector2 Intersection(const Line& a, const Line& b);
+
 private:
 
 	Vector2 m_a, m_b;
