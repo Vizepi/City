@@ -10,7 +10,6 @@ class Triangle : public Shape
 public:
 
 	inline Triangle(void) : m_a(), m_b(), m_c() {}
-
 	inline Triangle(const Vector2& a, const Vector2& b, const Vector2& c) : m_a(a), m_b(b), m_c(c) {}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);

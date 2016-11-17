@@ -8,14 +8,12 @@ class Quad : public Shape
 {
 public:
 
-	inline Quad(void)
-	{
-
-	}
+	inline Quad(void) : m_a(), m_b(), m_c(), m_d() {}
+	inline Quad(const Vector2& a, const Vector2& b, const Vector2& c, const Vector2& d) : m_a(a), m_b(b), m_c(c), m_d(d) {}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
-	virtual void BuildBuilding(std::ofstream& obj);
+    virtual void BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
 
 	inline double Area(void) const
 	{
