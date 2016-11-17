@@ -9,6 +9,7 @@ class Random
 public:
 
 	inline static void Seed(uint64_t seed) { s_instance.m_generator.seed(seed); }
+	inline static void Seed(void) { s_instance.m_generator.seed(std::chrono::high_resolution_clock::now().time_since_epoch().count()); }
 
 	inline static int64_t NextInt64(void) { return s_instance.m_dist_64(s_instance.m_generator); }
 	inline static int64_t NextInt64(int64_t min, int64_t max) { return std::uniform_int_distribution<int64_t>(min, max)(s_instance.m_generator); }
