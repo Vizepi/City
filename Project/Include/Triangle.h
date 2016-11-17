@@ -14,6 +14,8 @@ public:
 	inline Triangle(const Vector2& a, const Vector2& b, const Vector2& c) : m_a(a), m_b(b), m_c(c) {}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
+	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
+	virtual void BuildBuilding(std::vector<Shape>& mesh);
 
 	inline double Area(void) const
 	{

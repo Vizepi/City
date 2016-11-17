@@ -14,6 +14,8 @@ public:
 	}
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
+	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
+	virtual void BuildBuilding(std::vector<Shape>& mesh);
 
 	inline double Area(void) const
 	{
