@@ -36,15 +36,15 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
 
                 if (height < minGlobalHeight)
                 {
-                    type = (Random.NextDouble() < 0.95) ? FLOOR : ROOF;
+                    type = (Random::NextDouble() < 0.95) ? FLOOR : ROOF;
                 }
                 else if (height > maxGlobalHeight)
                 {
-                    type = (Random.NextDouble() > 0.95) ? FLOOR : ROOF;
+                    type = (Random::NextDouble() > 0.95) ? FLOOR : ROOF;
                 }
                 else
                 {
-                    type = (Random.NextDouble() < 0.8) ? FLOOR : ROOF;
+                    type = (Random::NextDouble() < 0.8) ? FLOOR : ROOF;
                 }
 
                 break;
