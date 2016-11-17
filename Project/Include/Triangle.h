@@ -12,11 +12,11 @@ public:
 	inline Triangle(void) : Shape(), m_a(), m_b(), m_c() {}
 	inline Triangle(const Vector2& a, const Vector2& b, const Vector2& c) : Shape(), m_a(a), m_b(b), m_c(c) {}
 	inline Triangle(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c() {}
-	inline BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
 
 	virtual void Subdivide(std::vector<Shape>& mesh);
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh);
-	virtual void BuildBuilding(std::ofstream& obj, uint32_t globalHeight);
+	virtual void BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
+
 
 	inline double Area(void) const
 	{

@@ -1,12 +1,9 @@
 #include <Quad.h>
-<<<<<<< HEAD
 #include <random>
 #include <functional>
 #include <chrono>
 #include <iostream>
-=======
 #include <Line.h>
->>>>>>> 3bd0fa489416427e0b653aabd15afff6d497d478
 
 void Quad::Subdivide(std::vector<Shape>& mesh)
 {
@@ -23,7 +20,7 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
     enum FloorType { GROUND, FLOOR, ROOF, END };
 
     std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
-    std::uniform_real_distribution<double> dist(0.0, 0.1);
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
     auto rand = std::bind(dist, generator);
 
     FloorType type = GROUND;
@@ -45,15 +42,15 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
 
                 if (height < minGlobalHeight)
                 {
-                    type = (rand() < 0.9) ? FLOOR : ROOF;
+                    type = (rand() < 0.95) ? FLOOR : ROOF;
                 }
-                else if (height < maxGlobalHeight)
+                else if (height > maxGlobalHeight)
                 {
-                    type = (rand() > 0.9) ? FLOOR : ROOF;
+                    type = (rand() > 0.95) ? FLOOR : ROOF;
                 }
                 else
                 {
-                    type = (rand() < 0.7) ? FLOOR : ROOF;
+                    type = (rand() < 0.8) ? FLOOR : ROOF;
                 }
 
                 break;
@@ -61,10 +58,9 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
                 // WriteRoof(obj);
                 height++;
                 type = END;
-                break;
+
             case END:
             default:
-               // std::cout << height;
                 break;
         }
     }
