@@ -1,13 +1,13 @@
-#include <Quad.h>
 #include <random>
 #include <functional>
 #include <chrono>
 #include <iostream>
+#include <Quad.h>
 #include <Line.h>
 
 void Quad::Subdivide(std::vector<Shape>& mesh)
 {
-
+	
 }
 
 void Quad::BuildNeighborhood(std::vector<Shape>& mesh) // Add const vector3 &v with the downtown
