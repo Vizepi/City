@@ -25,6 +25,7 @@ set(SOURCES_TOOLS
 source_group("Tools" FILES ${SOURCES_TOOLS})
 
 set(SOURCES_SHAPES
+	Include/Shape.h
 	Include/Quad.h
 	Include/Triangle.h
 )
