@@ -19,10 +19,16 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/../Lib)
 
+set(SOURCES_RANDOM Src/Random.cpp Include/Random.h)
+source_group("Tools\\Random" FILES ${SOURCES_RANDOM})
+
+set(SOURCES_VECTOR Include/Vector.h)
+source_group("Tools\\Vector" FILES ${SOURCES_VECTOR})
+
 set(SOURCES_TOOLS
-	Include/Vector.h
+	${SOURCES_VECTOR}
+	${SOURCES_RANDOM}
 )
-source_group("Tools" FILES ${SOURCES_TOOLS})
 
 set(SOURCES_QUAD Src/Quad.cpp Include/Quad.h)
 source_group("Shapes\\Quad" FILES ${SOURCES_QUAD})
