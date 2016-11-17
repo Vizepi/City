@@ -11,7 +11,8 @@ public:
 	inline virtual ~Shape(void) {}
 	virtual void Subdivide(std::vector<Shape>& mesh) = 0;
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh) = 0;
-	virtual void BuildBuilding(std::ofstream& obj, uint32_t globalHeight) = 0;
+	virtual void BuildBuilding(std::ofstream& obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight) = 0;
+
 protected:
 	uint64_t m_seed;
 };
