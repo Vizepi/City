@@ -12,6 +12,9 @@ public:
 
 	virtual void Subdivide(std::ofstream & obj) = 0;
 	virtual void BuildNeighborhood(std::ofstream & obj) = 0;
+
+	virtual double Area(void) const = 0;
+
 	void BuildBuilding(std::ofstream& obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
 	void BuildTerrain(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
 
