@@ -10,7 +10,6 @@ int main(int argc, char **argv)
 	std::cout << t.Area() << std::endl;
 
     Quad q(Vector2(0, 5), Vector2(5, 5), Vector2(5, 0), Vector2());
-
     std::ofstream obj;
     q.BuildBuilding (obj, 6, 12);
 

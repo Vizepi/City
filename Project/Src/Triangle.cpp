@@ -8,7 +8,11 @@ void Triangle::Subdivide(std::vector<Shape>& mesh)
 
 void Triangle::BuildNeighborhood(std::vector<Shape>& mesh)
 {
-
+	//
+	// Check space for buildings
+	
+	//
+	// Divide Neighborhood ans build buildings
 }
 
 void Triangle::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
