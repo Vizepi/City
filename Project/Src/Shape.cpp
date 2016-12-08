@@ -59,11 +59,12 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     return type;
 }
 
-void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
+void Shape::BuildBuilding(Object obj, const BuildingSetting & setting)
 {
     Random::Seed(m_seed);
     uint32_t height = 0;
     FloorType type = GROUND;
+    double floorSize = 3.0;
 
     while (type != END)
     {
@@ -71,14 +72,16 @@ void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
         {
             case GROUND:
             {
-                // WriteGround(obj);
+                obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
                 type = BuildGroundLevel (height, setting);
 
                 break;
             }
             case FLOOR:
             {
-                // WriteFloor(obj);
+//                Shrinked Quad
+//                obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
+                obj.WriteQuadBox(this, this, height * floorSize /*+ offset */, (height + 1) * floorSize, true, true);
                 type = BuildFloorLevel (height, setting);
 
                 break;
