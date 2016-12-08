@@ -1,5 +1,6 @@
 #include <Quad.h>
 #include <Line.h>
+#include <Random.h>
 
 void Quad::Subdivide(std::ofstream & obj)
 {
