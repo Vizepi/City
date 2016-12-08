@@ -11,11 +11,6 @@ void Triangle::BuildNeighborhood(std::ofstream & obj)
 
 }
 
-void Triangle::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
-{
-
-}
-
 void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)
 {
 	Line ab(m_a, m_b);
