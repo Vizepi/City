@@ -14,10 +14,10 @@ void Quad::BuildNeighborhood(std::vector<Shape>& mesh) // Add const vector3 &v w
 
 void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
 {
-    Random::Seed();
-    enum FloorType { GROUND, FLOOR, ROOF, END };
+    Random::Seed(m_seed);
+    enum FloorType { GROUND, NO_BUILDING, FLOOR, ROOF, END };
 
-    FloorType type = GROUND;
+    FloorType type = (Random::NextDouble() > minGlobalHeight) ? NO_BUILDING : GROUND;
     uint32_t height = 0;
 
     while (type != END)
@@ -25,22 +25,39 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
         switch (type)
         {
             case GROUND:
+            {
                 // WriteGround(obj);
-                height++;
-                type = FLOOR;
-                break;
-            case FLOOR:
-                // WriteFloor(obj);
-                // draw
-                height++;
+                double r = Random::NextDouble ();
 
                 if (height < minGlobalHeight)
                 {
-                    type = (Random::NextDouble() < 0.95) ? FLOOR : ROOF;
+                    type = (r < 0.9) ? FLOOR : ROOF;
                 }
                 else if (height > maxGlobalHeight)
                 {
-                    type = (Random::NextDouble() > 0.95) ? FLOOR : ROOF;
+                    type = (r > 0.9) ? FLOOR : ROOF;
+                }
+                else
+                {
+                    type = (r < 0.8) ? FLOOR : ROOF;
+                }
+
+                break;
+            }
+            case NO_BUILDING:
+                // WriteEmptyBuilding(obj)
+
+                break;
+            case FLOOR:
+                // WriteFloor(obj);
+
+                if (height < minGlobalHeight)
+                {
+                    type = (Random::NextDouble() < 0.9) ? FLOOR : ROOF;
+                }
+                else if (height > maxGlobalHeight)
+                {
+                    type = (Random::NextDouble() > 0.9) ? FLOOR : ROOF;
                 }
                 else
                 {
@@ -50,13 +67,13 @@ void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t
                 break;
             case ROOF:
                 // WriteRoof(obj);
-                height++;
                 type = END;
 
             case END:
             default:
                 break;
         }
+        height++;
     }
 }
 
