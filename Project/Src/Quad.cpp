@@ -10,7 +10,7 @@ void Quad::Subdivide(std::ofstream & obj)
 	uint64_t index = 0;
 	while (probabilitySum < rand)
 	{
-
+		
 	}
 }
 
