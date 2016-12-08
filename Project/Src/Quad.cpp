@@ -35,15 +35,15 @@ void Quad::BuildNeighborhood(std::ofstream & obj) // Add const vector3 &v with t
 	//--------------
 	// V2 - Neighborhood
 	//--------------
-	Quad innerQuad(this);
+	Quad innerQuad(*this);
 	innerQuad.Shrink(walkWaySize, walkWaySize, walkWaySize, walkWaySize);
 	
 	//
 	// Bat 1
 	Vector2 a = m_a;
-	Vector2 b = ;
+	Vector2 b = m_a;
 	Vector2 c = innerQuad.A();
-	Vector2 d = ;
+	Vector2 d = m_a;
 	BuildTerrain(Quad(), 0.0, 10.0);
 
 
