@@ -13,11 +13,11 @@ public:
 	void Translation(double distance);
 
 	// Accessors
-	inline const Vector2& A(void) const { return m_a; }
-	inline const Vector2& B(void) const { return m_b; }
+	inline const Vector2 & A(void) const { return m_a; }
+	inline const Vector2 & B(void) const { return m_b; }
 
-	inline void SetA(const Vector2& a) { m_a = a; }
-	inline void SetB(const Vector2& b) { m_b = b; }
+	inline void SetA(const Vector2 & a) { m_a = a; }
+	inline void SetB(const Vector2 & b) { m_b = b; }
 
 	static Vector2 Intersection(const Line& a, const Line& b);
 

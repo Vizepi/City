@@ -43,7 +43,7 @@ set(SOURCES_SHAPES Src/Shape.cpp Include/Shape.h)
 source_group("Shapes" FILES ${SOURCES_SHAPES})
 
 set(SOURCES_OBJECT Src/Object.cpp Include/Object.h)
-source_group("Object" FILES ${SOURCES_LINE})
+source_group("Object" FILES ${SOURCES_OBJECT})
 
 set(SOURCES_SETTING Src/Setting.cpp Include/Setting.h)
 source_group("Setting" FILES ${SOURCES_SETTING})

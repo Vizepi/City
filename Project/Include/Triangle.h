@@ -9,11 +9,11 @@ class Triangle : public Shape
 {
 public:
 
-	inline Triangle(void) : Shape(), m_a(), m_b(), m_c() {}
-	inline Triangle(const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(), m_a(a), m_b(b), m_c(c) {}
-	inline Triangle(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c() {}
+	inline Triangle(void) : Shape(), m_a(), m_b(), m_c(), m_ab(false), m_bc(false), m_ca(false) {}
+	inline Triangle(const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(), m_a(a), m_b(b), m_c(c), m_ab(false), m_bc(false), m_ca(false) {}
+	inline Triangle(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c(), m_ab(false), m_bc(false), m_ca(false) {}
 
-	inline Triangle(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(seed), m_a(a), m_b(b), m_c(c) {}
+	inline Triangle(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(seed), m_a(a), m_b(b), m_c(c), m_ab(false), m_bc(false), m_ca(false) {}
 
 	virtual void Subdivide(std::ofstream & obj);
 	virtual void BuildNeighborhood(std::ofstream & obj);
@@ -31,12 +31,21 @@ public:
 	inline const Vector2 & B(void) const { return m_b; }
 	inline const Vector2 & C(void) const { return m_c; }
 
-	inline void SetA(const Vector2 & a) { m_a = a; }
-	inline void SetB(const Vector2 & b) { m_b = b; }
-	inline void SetC(const Vector2 & c) { m_c = c; }
+	inline Triangle & SetA(const Vector2 & a) { m_a = a; return *this; }
+	inline Triangle & SetB(const Vector2 & b) { m_b = b; return *this; }
+	inline Triangle & SetC(const Vector2 & c) { m_c = c; return *this; }
+
+	inline bool IsShrinkedAB(void) const { return m_ab; }
+	inline bool IsShrinkedBC(void) const { return m_bc; }
+	inline bool IsShrinkedCA(void) const { return m_ca; }
+
+	inline Triangle & SetABShrinked(bool shrinked) { m_ab = shrinked; return *this; }
+	inline Triangle & SetBCShrinked(bool shrinked) { m_bc = shrinked; return *this; }
+	inline Triangle & SetCAShrinked(bool shrinked) { m_ca = shrinked; return *this; }
 
 private:
 
 	Vector2 m_a, m_b, m_c;
+	bool m_ab, m_bc, m_ca;
 
 };

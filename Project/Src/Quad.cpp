@@ -4,13 +4,58 @@
 
 void Quad::Subdivide(std::ofstream & obj)
 {
-	double probabilitySum = 0.0;
 	Random::Seed(m_seed);
-	double rand = Random::NextDouble();
-	uint64_t index = 0;
-	while (probabilitySum < rand)
+	uint64_t type = 0;
+	// TODO : Change type
+	// TODO : Set stop condition
+	double area = Area();
+	double roadSize = 2.0 * (1.0 + (fmin(fmax(area, 10000.0), 1000000.0) - 10000.0) / 110000.0);
+	switch (type)
 	{
-		
+	case 0: // Divided once edges AB and CD
+		{
+			double abLength = (m_b - m_a).Length();
+			double cdLength = (m_d - m_c).Length();
+			double abPosition = Random::NextDouble(abLength * 0.4, abLength * 0.6);
+			double cdPosition = Random::NextDouble(cdLength * 0.4, cdLength * 0.6);
+			Vector2 pAB = m_a + (m_b - m_a) * abPosition;
+			Vector2 pCD = m_d + (m_c - m_d) * cdPosition;
+			Quad q1(Random::NextUInt64(), m_a, pAB, pCD, m_d);
+			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			Quad q2(Random::NextUInt64(), pAB, m_b, m_d, pCD);
+			q2.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, roadSize);
+			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			q1.Subdivide(obj);
+			q2.Subdivide(obj);
+		}
+		break;
+	case 1:
+		{
+			double bcLength = (m_c - m_b).Length();
+			double daLength = (m_a - m_d).Length();
+			double bcPosition = Random::NextDouble(bcLength * 0.4, bcLength * 0.6);
+			double daPosition = Random::NextDouble(daLength * 0.4, daLength * 0.6);
+			Vector2 pBC = m_b + (m_c - m_b) * bcPosition;
+			Vector2 pDA = m_d + (m_a - m_d) * daPosition;
+			Quad q1(Random::NextUInt64(), m_a, m_b, pBC, pDA);
+			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			Quad q2(Random::NextUInt64(),pDA, pBC, m_c, m_d);
+			q2.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			q1.Subdivide(obj);
+			q2.Subdivide(obj);
+		}
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		break;
+	default:
+		break;
 	}
 }
 
