@@ -31,14 +31,18 @@ struct InfluencePoint
 struct Setting
 {
 	
-	static InfluencePoint	InfluencePoints[256];
-	static uint64_t			InfluencePointsCount;
-	static ShapeDivision	Quads;
-	static ShapeDivision	Triangles;
+	static InfluencePoint			InfluencePoints[256];
+	static uint64_t					InfluencePointsCount;
+	static ShapeDivision			Quads;
+	static ShapeDivision			Triangles;
 
-	inline BuildingSetting	GetInstance(const Vector2& position)
+	static inline BuildingSetting	GetInstance(const Vector2 & position)
 	{
 		BuildingSetting instance;
+		for (uint64_t nPoint = 0; nPoint < InfluencePointsCount; ++nPoint)
+		{
+			double x = 0.0;
+		}
 		return instance;
 	}
 
