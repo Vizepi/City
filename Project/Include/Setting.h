@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <Vector.h>
 
 struct BuildingSize
 {
@@ -20,17 +21,25 @@ struct ShapeDivision
 	uint64_t Count;
 };
 
+struct InfluencePoint
+{
+	BuildingSetting setting;
+	Vector2			position;
+	double			radius;
+};
+
 struct Setting
 {
 	
-	static BuildingSetting	Outskirt;
-	static BuildingSetting	Citycenter;
-	static ShapeDivision	QuadSetting;
-	static ShapeDivision	TriangleSetting;
+	static InfluencePoint	InfluencePoints[256];
+	static uint64_t			InfluencePointsCount;
+	static ShapeDivision	Quads;
+	static ShapeDivision	Triangles;
 
-	inline double			Interpolate(double x)
+	inline BuildingSetting	GetInstance(const Vector2& position)
 	{
-		return 0.0;
+		BuildingSetting instance;
+		return instance;
 	}
 
 };
