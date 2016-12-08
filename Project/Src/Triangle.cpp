@@ -8,11 +8,28 @@ void Triangle::Subdivide(std::ofstream & obj)
 
 void Triangle::BuildNeighborhood(std::ofstream & obj)
 {
+	uint64_t crtVersion = 1;
 	//
-	// Check space for buildings
+	// Get settings
+	BuildingSetting s = Setting::GetInstance(Center());
 	
-	//
-	// Divide Neighborhood ans build buildings
+	//--------------
+	// V0 - 1 Building
+	//--------------
+	if(0 == crtVersion)
+	{
+		BuildTerrain(obj, s);
+	}
+	
+	//--------------
+	// V1 - 1 Building + shrink
+	//--------------
+	else if(1 == crtVersion)
+	{
+		double walkWaySize = 5.0;
+		Shrink(walkWaySize);
+		BuildTerrain(obj, s);
+	}
 }
 
 void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)

@@ -44,6 +44,13 @@ inline Vector2	operator/	(const Vector2 & lhs, double rhs) { return Vector2(lhs.
 inline Vector2	operator-	(const Vector2 & rhs) { return Vector2(-rhs.X(), -rhs.Y()); }
 inline bool		operator<	(const Vector2 & lhs, const Vector2 & rhs) { return lhs.X() < rhs.X() ? true : (lhs.X() == rhs.X() ? lhs.Y() < rhs.Y() : false); }
 
+// Prejection of v1 on v2
+inline Vector2	Projection	(const Vector2 & v1, const Vector2 & v2)
+{
+	float v2SL = v2.SquareLength();
+	return v2 * ( DotProduct(v2, v1) / v2SL );
+}
+
 class Vector3
 {
 

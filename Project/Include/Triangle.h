@@ -24,6 +24,11 @@ public:
 		return abs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
 	}
 
+	inline Vector2 Center(void) const
+	{
+		return (A()+B()+C())/3;
+	}
+	
 	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize);  }
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA);
 

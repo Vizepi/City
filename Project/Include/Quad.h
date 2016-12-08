@@ -3,6 +3,7 @@
 #include <Vector.h>
 #include <Triangle.h>
 #include <Shape.h>
+#include "Line.h"
 
 class Quad : public Shape
 {
@@ -21,6 +22,11 @@ public:
 		return Triangle(m_a, m_b, m_c).Area() + Triangle(m_a, m_c, m_d).Area();
 	}
 
+	inline Vector2 Center(void) const
+	{
+		return 	Line::Intersection(Line(A(), C()), Line(B(), D()));
+	}
+	
 	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize, roadSize); }
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA);
 
