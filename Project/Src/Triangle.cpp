@@ -1,12 +1,12 @@
 #include <Triangle.h>
 #include <Line.h>
 
-void Triangle::Subdivide(std::vector<Shape>& mesh)
+void Triangle::Subdivide(std::ofstream & obj)
 {
 
 }
 
-void Triangle::BuildNeighborhood(std::vector<Shape>& mesh)
+void Triangle::BuildNeighborhood(std::ofstream & obj)
 {
 	//
 	// Check space for buildings

@@ -1,31 +1,50 @@
 #include <Quad.h>
 #include <Line.h>
 
-void Quad::Subdivide(std::vector<Shape>& mesh)
+void Quad::Subdivide(std::ofstream & obj)
 {
-	
+	/*double probabilitySum = 0.0;
+	Random::Seed(m_seed);
+	double rand = Random::NextDouble();
+	uint64_t index = 0;
+	while (probabilitySum < rand)
+	{
+
+	}*/
 }
 
-void Quad::BuildNeighborhood(std::vector<Shape>& mesh) // Add const vector3 &v with the downtown
+void Quad::BuildNeighborhood(std::ofstream & obj) // Add const vector3 &v with the downtown
 {
 	//
 	// Get settings
-	
+	// Setting::GetInstance();
 	
 	//--------------
 	// V0 - 1 Building
 	//--------------
-	BuildBuilding(obj, 
+	BuildTerrain(obj, 0.0, 10.0);
 
 	//--------------
 	// V1 - 1 Building + shrink
 	//--------------
+	double walkWaySize = 5.0;
+	Shrink(walkWaySize, walkWaySize, walkWaySize, walkWaySize);
+	BuildTerrain(obj, 0.0, 10.0);
 
 	//--------------
 	// V2 - Neighborhood
 	//--------------
-
+	Quad innerQuad(this);
+	innerQuad.Shrink(walkWaySize, walkWaySize, walkWaySize, walkWaySize);
 	
+	//
+	// Bat 1
+	Vector2 a = m_a;
+	Vector2 b = ;
+	Vector2 c = innerQuad.A();
+	Vector2 d = ;
+	BuildTerrain(Quad(), 0.0, 10.0);
+
 
 	//
 	// Random seed
