@@ -10,6 +10,7 @@ class Triangle : public Shape
 public:
 
 	inline Triangle(void) : Shape(), m_a(), m_b(), m_c(), m_ab(false), m_bc(false), m_ca(false) {}
+	inline Triangle(const Triangle & t) : Shape(), m_a(t.A()), m_b(t.B()), m_c(t.C()), m_ab(t.m_ab), m_bc(t.m_bc), m_ca(t.m_ca) {}
 	inline Triangle(const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(), m_a(a), m_b(b), m_c(c), m_ab(false), m_bc(false), m_ca(false) {}
 	inline Triangle(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c(), m_ab(false), m_bc(false), m_ca(false) {}
 
@@ -23,6 +24,11 @@ public:
 		return abs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
 	}
 
+	inline Vector2 Center(void) const
+	{
+		return (A()+B()+C())/3;
+	}
+	
 	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize);  }
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA);
 

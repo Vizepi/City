@@ -33,6 +33,7 @@ protected:
 
 inline double	CrossProduct(const Vector2 & lhs, const Vector2 & rhs) { return lhs.X() * rhs.Y() - lhs.Y() * rhs.X(); }
 inline double	DotProduct	(const Vector2 & lhs, const Vector2 & rhs) { return lhs.X() * rhs.X() + lhs.Y() * rhs.Y(); }
+inline Vector2	Projection	(const Vector2 & v1, const Vector2 & v2) { return v2 * (DotProduct(v2, v1) / v2.Length()); }
 inline Vector2	operator+	(const Vector2 & lhs, const Vector2 & rhs) { return Vector2(lhs.X() + rhs.X(), lhs.Y() + rhs.Y()); }
 inline Vector2	operator-	(const Vector2 & lhs, const Vector2 & rhs) { return Vector2(lhs.X() - rhs.X(), lhs.Y() - rhs.Y()); }
 inline Vector2	operator*	(const Vector2 & lhs, const Vector2 & rhs) { return Vector2(lhs.X() * rhs.X(), lhs.Y() * rhs.Y()); }
@@ -76,6 +77,7 @@ protected:
 
 inline Vector3	CrossProduct(const Vector3 & lhs, const Vector3 & rhs) { return Vector3(lhs.Y() * rhs.Z() - lhs.Z() * rhs.Y(), lhs.Z() * rhs.X() - lhs.X() * rhs.Z(), lhs.X() * rhs.Y() - lhs.Y() * rhs.X()); }
 inline double	DotProduct	(const Vector3 & lhs, const Vector3 & rhs) { return lhs.X() * rhs.X() + lhs.Y() * rhs.Y() + lhs.Z() * rhs.Z(); }
+inline Vector3	Projection	(const Vector3 & v1, const Vector3 & v2) { return v2 * (DotProduct(v2, v1) / v2.Length()); }
 inline Vector3	operator+	(const Vector3 & lhs, const Vector3 & rhs) { return Vector3(lhs.X() + rhs.X(), lhs.Y() + rhs.Y(), lhs.Z() + rhs.Z()); }
 inline Vector3	operator-	(const Vector3 & lhs, const Vector3 & rhs) { return Vector3(lhs.X() - rhs.X(), lhs.Y() - rhs.Y(), lhs.Z() - rhs.Z()); }
 inline Vector3	operator*	(const Vector3 & lhs, const Vector3 & rhs) { return Vector3(lhs.X() * rhs.X(), lhs.Y() * rhs.Y(), lhs.Z() * rhs.Z()); }

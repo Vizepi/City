@@ -3,12 +3,14 @@
 #include <Vector.h>
 #include <Triangle.h>
 #include <Shape.h>
+#include "Line.h"
 
 class Quad : public Shape
 {
 public:
 
 	inline Quad(void) : Shape(), m_a(), m_b(), m_c(), m_d(), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
+	inline Quad(const Quad & q) : Shape(), m_a(q.A()), m_b(q.B()), m_c(q.C()), m_d(q.D()), m_ab(q.m_ab), m_bc(q.m_bc), m_cd(q.m_cd), m_da(q.m_da) {}
 	inline Quad(const Vector2 & a, const Vector2 & b, const Vector2 & c, const Vector2 & d) : Shape(), m_a(a), m_b(b), m_c(c), m_d(d), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
 	inline Quad(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c(), m_d(), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
 	inline Quad(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c, const Vector2 & d) : Shape(seed), m_a(a), m_b(b), m_c(c), m_d(d), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
@@ -20,6 +22,11 @@ public:
 		return Triangle(m_a, m_b, m_c).Area() + Triangle(m_a, m_c, m_d).Area();
 	}
 
+	inline Vector2 Center(void) const
+	{
+		return 	Line::Intersection(Line(A(), C()), Line(B(), D()));
+	}
+	
 	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize, roadSize); }
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA);
 

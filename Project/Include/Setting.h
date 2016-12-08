@@ -33,6 +33,8 @@ struct Setting
 	
 	static InfluencePoint	InfluencePoints[256];
 	static uint64_t			InfluencePointsCount;
+	static BuildingSize		FloorSize;
+	static BuildingSize		FloorSpaceSize;
 	static ShapeDivision	Quads;
 	static ShapeDivision	Triangles;
 

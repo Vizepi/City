@@ -2,6 +2,8 @@
 
 /*static*/ InfluencePoint Setting::InfluencePoints[256];
 /*static*/ uint64_t Setting::InfluencePointsCount = 0;
+/*static*/ BuildingSize Setting::FloorSize;
+/*static*/ BuildingSize Setting::FloorSpaceSize;
 /*static*/ ShapeDivision Setting::Quads;
 /*static*/ ShapeDivision Setting::Triangles;
 
