@@ -15,11 +15,6 @@ void Triangle::BuildNeighborhood(std::vector<Shape>& mesh)
 	// Divide Neighborhood ans build buildings
 }
 
-void Triangle::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
-{
-
-}
-
 void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)
 {
 	Line ab(m_a, m_b);
