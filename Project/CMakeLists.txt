@@ -42,13 +42,16 @@ source_group("Shapes\\Line" FILES ${SOURCES_LINE})
 set(SOURCES_SHAPES Src/Shape.cpp Include/Shape.h)
 source_group("Shapes" FILES ${SOURCES_SHAPES})
 
+set(SOURCES_SETTING Src/Setting.cpp Include/Setting.h)
+source_group("Setting" FILES ${SOURCES_SETTING})
+
 set(SOURCES
 	${SOURCES_TOOLS}
 	${SOURCES_LINE}
 	${SOURCES_SHAPES}
 	${SOURCES_QUAD}
 	${SOURCES_TRIANGLE}
-	Include/Setting.h
+	${SOURCES_SETTING}
 	Src/main.cpp
 )
 
