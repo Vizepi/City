@@ -2,19 +2,26 @@
 #include <Line.h>
 #include <Random.h>
 
-void Quad::Subdivide(std::vector<Shape>& mesh)
+void Quad::Subdivide(std::ofstream & obj)
 {
-	
+	double probabilitySum = 0.0;
+	Random::Seed(m_seed);
+	double rand = Random::NextDouble();
+	uint64_t index = 0;
+	while (probabilitySum < rand)
+	{
+
+	}
 }
 
-void Quad::BuildNeighborhood(std::vector<Shape>& mesh) // Add const vector3 &v with the downtown
+void Quad::BuildNeighborhood(std::ofstream & obj) // Add const vector3 &v with the downtown
 {
 
 }
 
 void Quad::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
 {
-    Random::Seed();
+    Random::Seed(m_seed);
     enum FloorType { GROUND, FLOOR, ROOF, END };
 
     FloorType type = GROUND;
