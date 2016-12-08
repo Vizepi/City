@@ -12,6 +12,7 @@ public:
 	virtual void Subdivide(std::vector<Shape>& mesh) = 0;
 	virtual void BuildNeighborhood(std::vector<Shape>& mesh) = 0;
 	void BuildBuilding(std::ofstream& obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
+	void BuildTerrain(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
 
 protected:
 	uint64_t m_seed;
