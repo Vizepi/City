@@ -17,16 +17,16 @@ enum FloorType
     END
 };
 
-FloorType BuildGroundLevel(uint32_t height, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
+FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
 {
     FloorType type;
     double r = Random::NextDouble ();
 
-    if (height < minGlobalHeight)
+    if (height < setting.Height.Min)
     {
         type = (r < 0.9) ? FLOOR : ROOF;
     }
-    else if (height > maxGlobalHeight)
+    else if (height > setting.Height.Max)
     {
         type = (r > 0.9) ? FLOOR : ROOF;
     }
@@ -38,16 +38,16 @@ FloorType BuildGroundLevel(uint32_t height, uint32_t minGlobalHeight, uint32_t m
     return type;
 }
 
-FloorType BuildFloorLevel(uint32_t height, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
+FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
 {
     FloorType type;
     double r = Random::NextDouble();
 
-    if (height < minGlobalHeight)
+    if (height < setting.Height.Min)
     {
         type = (r < 0.9) ? FLOOR : ROOF;
     }
-    else if (height > maxGlobalHeight)
+    else if (height > setting.Height.Max)
     {
         type = (r < 0.1) ? FLOOR : ROOF;
     }
@@ -59,7 +59,7 @@ FloorType BuildFloorLevel(uint32_t height, uint32_t minGlobalHeight, uint32_t ma
     return type;
 }
 
-void Shape::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
+void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
 {
     Random::Seed(m_seed);
     uint32_t height = 0;
@@ -72,14 +72,14 @@ void Shape::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_
             case GROUND:
             {
                 // WriteGround(obj);
-                type = BuildGroundLevel (height, minGlobalHeight, maxGlobalHeight);
+                type = BuildGroundLevel (height, setting);
 
                 break;
             }
             case FLOOR:
             {
                 // WriteFloor(obj);
-                type = BuildFloorLevel (height, minGlobalHeight, maxGlobalHeight);
+                type = BuildFloorLevel (height, setting);
 
                 break;
             }
@@ -97,19 +97,17 @@ void Shape::BuildBuilding(std::ofstream & obj, uint32_t minGlobalHeight, uint32_
     }
 }
 
-void Shape::BuildTerrain(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight)
+void Shape::BuildTerrain(std::ofstream & obj, const BuildingSetting & setting)
 {
-    FloorType type = (Random::NextDouble() > minGlobalHeight) ? NO_BUILDING : GROUND;
+    FloorType type = (Random::NextDouble() > setting.Height.Min) ? NO_BUILDING : GROUND;
     switch (type)
     {
         case BUILDING:
-            BuildBuilding(obj, minGlobalHeight, maxGlobalHeight);
+            BuildBuilding(obj, setting.Height.Min, setting.Height.Max);
             break;
         case NONE:
             // WriteEmptySpace(obj)
         default:
-
             break;
-        
     }
 }
