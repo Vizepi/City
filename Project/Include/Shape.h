@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <fstream>
+#include <Setting.h>
 
 class Shape
 {
@@ -15,8 +16,8 @@ public:
 
 	virtual double Area(void) const = 0;
 
-	void BuildBuilding(std::ofstream& obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
-	void BuildTerrain(std::ofstream & obj, uint32_t minGlobalHeight, uint32_t maxGlobalHeight);
+	void BuildBuilding(std::ofstream & obj, const BuildingSetting & setting);
+	void BuildTerrain(std::ofstream & obj, const BuildingSetting & setting);
 
 protected:
 	uint64_t m_seed;
