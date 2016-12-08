@@ -12,6 +12,9 @@ public:
 	inline virtual ~Shape(void) {}
 	virtual void Subdivide(std::ofstream & obj) = 0;
 	virtual void BuildNeighborhood(std::ofstream & obj) = 0;
+
+	virtual double Area(void) const = 0;
+
 	void BuildBuilding(std::ofstream & obj, const BuildingSetting & setting);
 	void BuildTerrain(std::ofstream & obj, const BuildingSetting & setting);
 

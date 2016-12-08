@@ -19,7 +19,7 @@ public:
 	virtual void Subdivide(std::ofstream & obj);
 	virtual void BuildNeighborhood(std::ofstream & obj);
 
-	inline double Area(void) const
+	inline virtual double Area(void) const
 	{
 		return abs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
 	}
