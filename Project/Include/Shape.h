@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <fstream>
+#include <Setting.h>
 
 class Shape
 {

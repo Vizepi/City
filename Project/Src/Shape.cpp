@@ -103,7 +103,7 @@ void Shape::BuildTerrain(std::ofstream & obj, const BuildingSetting & setting)
     switch (type)
     {
         case BUILDING:
-            BuildBuilding(obj, setting.Height.Min, setting.Height.Max);
+            BuildBuilding(obj, setting);
             break;
         case NONE:
             // WriteEmptySpace(obj)
