@@ -6,10 +6,14 @@ void Quad::Subdivide(std::ofstream & obj)
 {
 	Random::Seed(m_seed);
 	uint64_t type = 0;
-	// TODO : Change type
-	// TODO : Set stop condition
 	double area = Area();
-	double roadSize = 2.0 * (1.0 + (fmin(fmax(area, 200.0 * 200.0), 2000.0 * 2000.0) - 200.0 * 200.0) / (2000.0 * 2000.0 - 200.0 * 200.0));
+	// TODO : Change type
+	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
+	if (stopChance < Random::NextDouble())
+	{
+		BuildNeighborhood(obj);
+	}
+	double roadSize = Setting::Ease(area, double(2000ull * 2000ull), double(200ull * 200ull)) * 36.0 + 4.0;
 	switch (type)
 	{
 	case 0: // Divided once edges AB and CD

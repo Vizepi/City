@@ -39,5 +39,7 @@ struct Setting
 	static ShapeDivision	Triangles;
 
 	static BuildingSetting	GetInstance(const Vector2 & position);
+	static inline double	Ease(double x) { double y = 1.0 - x * x; return y * y * y; }
+	static inline double	Ease(double x, double min, double max) { return Ease((x - min) / (max - min)); }
 
 };

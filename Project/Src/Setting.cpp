@@ -22,8 +22,7 @@
 		{
 			continue;
 		}
-		double y = (1.0 - x*x);
-		y *= y*y;
+		double y = Ease(x);
 		instance.Height.Min += InfluencePoints[nPoint].setting.Height.Min * y;
 		instance.Height.Max += InfluencePoints[nPoint].setting.Height.Max * y;
 		instance.Size.Min += InfluencePoints[nPoint].setting.Size.Min * y;
