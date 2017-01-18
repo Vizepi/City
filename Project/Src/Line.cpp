@@ -5,7 +5,7 @@ void Line::Translation(double distance)
 	Vector2 orthogonal = (m_b - m_a).Orthogonal();
 	orthogonal.Normalize();
 
-	orthogonal = orthogonal * Vector2(distance, distance);
+	orthogonal = orthogonal * distance;
 
 	m_a = m_a + orthogonal;
 	m_b = m_b + orthogonal;
