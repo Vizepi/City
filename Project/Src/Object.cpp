@@ -11,7 +11,7 @@ Object::~Object()
     m_obj.close();
 }
 
-void Object::WriteGround(const Quad & q1, const Quad & q2, double heightMin, double heightMax, bool openTop, bool openBottom)
+void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, double heightMax, bool openTop, bool openBottom)
 {
     // Bottom vertice
     m_obj << "v " << q1.A().X() << " " << q1.A().Y() << " " << heightMin << "\n"; // -8
@@ -25,7 +25,7 @@ void Object::WriteGround(const Quad & q1, const Quad & q2, double heightMin, dou
     m_obj << "v " << q2.D().X() << " " << q2.D().Y() << " " << heightMax << "\n"; // -1
 
     // Bottom faces
-    if (openBottom) 
+    if (openBottom)
     {
         m_obj << "f " << -8 << " " << -7 << " " << -6 << "\n";
         m_obj << "f " << -6 << " " << -5 << " " << -8 << "\n";
@@ -50,7 +50,7 @@ void Object::WriteGround(const Quad & q1, const Quad & q2, double heightMin, dou
     m_obj << "f " << -3 << " " << -7 << " " << -8 << "\n";
 }
 
-void Object::WriteGround(Triangle t1, Triangle t2, double heightMin, double heightMax, bool openTop, bool openBottom)
+void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double heightMax, bool openTop, bool openBottom)
 {
     // Bottom vertice
     m_obj << "v " << t1.A().X() << " " << t1.A().Y() << " " << heightMin << "\n"; // -6
@@ -62,7 +62,7 @@ void Object::WriteGround(Triangle t1, Triangle t2, double heightMin, double heig
     m_obj << "v " << t2.C().X() << " " << t2.C().Y() << " " << heightMax << "\n"; // -1
 
     // Bottom faces
-    if (openBottom) 
+    if (openBottom)
     {
         m_obj << "f " << -6 << " " << -5 << " " << -4 << "\n";
     }
@@ -84,7 +84,14 @@ void Object::WriteGround(Triangle t1, Triangle t2, double heightMin, double heig
 
 void Object::WriteFloor(Quad q, double heightMin, double heightMax)
 {
-
+    m_obj.WriteBox(this, this, // Shrinked Quad
+        height * Setting::FloorSize,
+        height * Setting::FloorSize + Setting::FloorSpaceSize,
+        false, false);
+    obj.WriteQuadBox(this, this,
+        height * (Setting::FloorSize + Setting::FloorSpaceSize) + Setting::FloorSpaceSize,
+        (height + 1) * Setting::FloorSize,
+        true, true);
 }
 
 void Object::WriteFloor(Triangle t, double heightMin, double heightMax)

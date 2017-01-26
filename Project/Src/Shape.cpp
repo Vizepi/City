@@ -79,9 +79,10 @@ void Shape::BuildBuilding(Object obj, const BuildingSetting & setting)
             }
             case FLOOR:
             {
-//                Shrinked Quad
-//                obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
-                obj.WriteQuadBox(this, this, height * floorSize /*+ offset */, (height + 1) * floorSize, true, true);
+                Shape shrinkedShape(*this);
+                shrinkedQuad.set
+
+                obj.WriteBox(this, this, height);
                 type = BuildFloorLevel (height, setting);
 
                 break;
