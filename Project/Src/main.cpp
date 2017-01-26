@@ -8,19 +8,16 @@ int main(int argc, char **argv)
 {
 	Triangle t(Vector2(0, 5), Vector2(), Vector2(5, 0));
 	t.Shrink(1);
-	std::cout << t.Area() << std::endl;
 
-    Quad q(Random::NextUInt64(), Vector2(0, 1000), Vector2(1000, 1000), Vector2(1000, 0), Vector2());
-	std::cout << q.Area() << std::endl;
-	q.Shrink(1);
-	std::cout << q.Area() << std::endl;
+	Random::Seed(0);
+    Quad q(Random::NextUInt64(), Vector2(0, 10000), Vector2(), Vector2(10000, 0), Vector2(10000, 10000));
 
-    std::ofstream obj;
+    std::ofstream obj("Output/test.obj");
 	q.Subdivide(obj);
-    q.BuildTerrain (obj, Setting::GetInstance(q.A()));
+	obj.close();
+    //q.BuildTerrain (obj, Setting::GetInstance(q.A()));
 
-	std::cout << t.A().X() << " " << t.A().Y() << " ; " << t.B().X() << " " << t.B().Y() << " ; " << t.C().X() << " " << t.C().Y() << std::endl;
-
+	std::cout << "Complete" << std::endl;
 	getchar();
 
 	return 0;

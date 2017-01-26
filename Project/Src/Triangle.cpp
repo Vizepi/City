@@ -3,7 +3,10 @@
 
 void Triangle::Subdivide(std::ofstream & obj)
 {
-
+	obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
+	obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
+	obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
+	obj << "f -1 -2 -3\n";
 }
 
 void Triangle::BuildNeighborhood(std::ofstream & obj)

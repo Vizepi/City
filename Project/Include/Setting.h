@@ -51,6 +51,6 @@ struct Setting
 
 	static BuildingSetting	GetInstance(const Vector2 & position);
 	static inline double	Ease(double x) { double y = 1.0 - x * x; return fmax(0.0, fmin(1.0, 1.0 - y * y * y)); }
-	static inline double	Ease(double x, double min, double max) { return Ease(x - min / (max - min)); }
+	static inline double	Ease(double x, double min, double max) { return Ease((fmax(min, fmin(max, x)) - min) / (max - min)); }
 
 };
