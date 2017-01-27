@@ -15,6 +15,8 @@ public:
 	inline Quad(uint64_t seed) : Shape(seed), m_a(), m_b(), m_c(), m_d(), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
 	inline Quad(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c, const Vector2 & d) : Shape(seed), m_a(a), m_b(b), m_c(c), m_d(d), m_ab(false), m_bc(false), m_cd(false), m_da(false) {}
 
+	int GetSubdivisionType(void) const;
+
 	virtual void Subdivide(std::ofstream & obj);
 	virtual void BuildNeighborhood(std::ofstream & obj);
 	inline virtual double Area(void) const

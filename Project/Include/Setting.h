@@ -10,8 +10,12 @@
 
 // DIVISION
 #define QUAD_EDGE_DIVISION_INTERVAL 0.2
-#define QUAD_EDGE_DIVISION_INTERVAL_HALF QUAD_EDGE_DIVISION_INTERVAL / 2.0
+#define QUAD_EDGE_DIVISION_INTERVAL_HALF (QUAD_EDGE_DIVISION_INTERVAL / 2.0)
 #define QUAD_EDGE_DIVISION_CENTER 0.5
+
+#define TRIANGLE_EDGE_DIVISION_INTERVAL 0.2
+#define TRIANGLE_EDGE_DIVISION_INTERVAL_HALF (TRIANGLE_EDGE_DIVISION_INTERVAL / 2.0)
+#define TRIANGLE_EDGE_DIVISION_CENTER 0.5
 
 
 struct BuildingSize
@@ -52,5 +56,6 @@ struct Setting
 	static BuildingSetting	GetInstance(const Vector2 & position);
 	static inline double	Ease(double x) { double y = 1.0 - x * x; return fmax(0.0, fmin(1.0, 1.0 - y * y * y)); }
 	static inline double	Ease(double x, double min, double max) { return Ease((fmax(min, fmin(max, x)) - min) / (max - min)); }
+	static inline double	EaseCentered(double x, double min, double max) { return Ease(2.0 * (fmax(min, fmin(max, x)) - min) / (max - min) - 1.0); }
 
 };

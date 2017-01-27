@@ -4,59 +4,68 @@
 #include <iostream>
 #include <vector>
 
+#define QUAD_DIVIDE_GRID 0
+#define QUAD_DIVIDE_CROSS 1
+#define QUAD_DIVIDE_H_CUT 2
+#define QUAD_DIVIDE_V_CUT 3
+#define QUAD_DIVIDE_AC_CUT 4
+#define QUAD_DIVIDE_BD_CUT 5
+
 struct Type
 {
 	int type;
 	double size;
 };
 
-void Quad::Subdivide(std::ofstream & obj)
+int Quad::GetSubdivisionType(void) const
 {
-	Random::Seed(m_seed);
-	uint64_t type = Random::NextDouble() < 0.5 ? 2 : Random::NextDouble() < 0.5 ? 0 : 1;
-	double area = Area();
-
-	// Change type
 	std::vector<Type> types;
-	types.push_back({ 2, 2.5 });
-	types.push_back({ 3, 0.5 }); /*TESTEST*/types.pop_back();
-	double sizes = 3.0; /*TESTEST*/sizes -= 0.5;
+	types.push_back({ QUAD_DIVIDE_GRID, 2.5 });
+	types.push_back({ QUAD_DIVIDE_CROSS, 0.5 });
+	double sizes = 3.0;
 	double v = ((m_c - m_b).Length() + (m_a - m_d).Length()) / ((m_b - m_a).Length() + (m_d - m_c).Length());
 	if (v >= 1.25 && v <= 2.5)
 	{
-		double s = Setting::Ease(v, 1.25, 2.5);
-		types.push_back({ 1, s });
+		double s = Setting::EaseCentered(v, 1.25, 2.5);
+		types.push_back({ QUAD_DIVIDE_H_CUT, s });
 		sizes += s;
 	}
 	v = ((m_b - m_a).Length() + (m_d - m_c).Length()) / ((m_c - m_b).Length() + (m_a - m_d).Length());
 	if (v >= 1.25 && v <= 2.5)
 	{
-		double s = Setting::Ease(v, 1.25, 2.5);
-		types.push_back({ 0, s });
+		double s = Setting::EaseCentered(v, 1.25, 2.5);
+		types.push_back({ QUAD_DIVIDE_V_CUT, s });
 		sizes += s;
 	}
 	v = (m_c - m_a).Length() / (m_d - m_b).Length();
 	if (v >= 0.75 && v <= 1.0)
 	{
-		double s = Setting::Ease(v, 0.75, 1.0);
-		types.push_back({ 4, s }); /*TESTEST*/types.pop_back();
-		sizes += s; /*TESTEST*/sizes -= s;
+		double s = Setting::EaseCentered(v, 0.75, 1.0);
+		types.push_back({ QUAD_DIVIDE_AC_CUT, s });
+		sizes += s;
 	}
 	v = (m_d - m_b).Length() / (m_c - m_a).Length();
 	if (v >= 0.75 && v <= 1.0)
 	{
-		double s = Setting::Ease(v, 0.75, 1.0);
-		types.push_back({ 5, s }); /*TESTEST*/types.pop_back();
-		sizes += s; /*TESTEST*/sizes -= s;
+		double s = Setting::EaseCentered(v, 0.75, 1.0);
+		types.push_back({ QUAD_DIVIDE_BD_CUT, s });
+		sizes += s;
 	}
 	int currentType = -1;
 	double size = Random::NextDouble(0.0, sizes);
 	do
 	{
 		currentType++;
-		sizes -= types[currentType].size;
-	} while (sizes >= 0.0 && currentType < types.size() - 1);
-	type = types[currentType].type;
+		size -= types[currentType].size;
+	} while (size >= 0.0 && currentType < types.size() - 1);
+	return types[currentType].type;
+}
+
+void Quad::Subdivide(std::ofstream & obj)
+{
+	Random::Seed(m_seed);
+	double area = Area();
+	uint64_t type = GetSubdivisionType();
 
 	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
 	if (stopChance < Random::NextDouble())
@@ -70,46 +79,10 @@ void Quad::Subdivide(std::ofstream & obj)
 	}
 	else
 	{
-		static int tab = 0;
-		tab++;
-		for(int i = 0; i < tab; ++i) std::cout << " ";
-		std::cout << type << std::endl;
 		double roadSize = Setting::Ease(area, double(200ull * 200ull), double(2000ull * 2000ull)) * ROAD_SIZE_COEF / 2.0 + SIDEWALK_SIZE;
 		switch (type)
 		{
-		case 0: // Divided once edges AB and CD
-		{
-			double abPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
-			double cdPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
-			Vector2 pAB = m_a + (m_b - m_a) * abPosition;
-			Vector2 pCD = m_d + (m_c - m_d) * cdPosition;
-			Quad q1(Random::NextUInt64(), m_a, pAB, pCD, m_d);
-			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
-			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
-			Quad q2(Random::NextUInt64(), pAB, m_b, m_c, pCD);
-			q2.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, roadSize);
-			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
-			q1.Subdivide(obj);
-			q2.Subdivide(obj);
-		}
-		break;
-		case 1:
-		{
-			double bcPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
-			double daPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
-			Vector2 pBC = m_b + (m_c - m_b) * bcPosition;
-			Vector2 pDA = m_d + (m_a - m_d) * daPosition;
-			Quad q1(Random::NextUInt64(), m_a, m_b, pBC, pDA);
-			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, roadSize, IsShrinkedDA() ? 0.0 : roadSize);
-			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
-			Quad q2(Random::NextUInt64(), pDA, pBC, m_c, m_d);
-			q2.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
-			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
-			q1.Subdivide(obj);
-			q2.Subdivide(obj);
-		}
-		break;
-		case 2:
+		case QUAD_DIVIDE_GRID: // Divide quad in four parts, cutting edges
 		{
 			double abPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
 			double bcPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
@@ -117,7 +90,7 @@ void Quad::Subdivide(std::ofstream & obj)
 			double daPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
 			Vector2 pAB = m_a + (m_b - m_a) * abPosition;
 			Vector2 pBC = m_b + (m_c - m_b) * bcPosition;
-			Vector2 pCD = m_d + (m_c - m_d) * cdPosition;
+			Vector2 pCD = m_c + (m_d - m_c) * cdPosition;
 			Vector2 pDA = m_d + (m_a - m_d) * daPosition;
 			Vector2 center = Line::Intersection(Line(pAB, pCD), Line(pBC, pDA));
 			Quad q1(Random::NextUInt64(), m_a, pAB, center, pDA);
@@ -138,7 +111,7 @@ void Quad::Subdivide(std::ofstream & obj)
 			q4.Subdivide(obj);
 		}
 		break;
-		case 3:
+		case QUAD_DIVIDE_CROSS: // Divide quad in four parts, cuttings angles
 		{
 			Vector2 center = Line::Intersection(Line(m_a, m_c), Line(m_b, m_d));
 			Triangle t1(Random::NextUInt64(), m_a, m_b, center);
@@ -159,7 +132,39 @@ void Quad::Subdivide(std::ofstream & obj)
 			t4.Subdivide(obj);
 		}
 		break;
-		case 4:
+		case QUAD_DIVIDE_H_CUT: // Divide quad in two parts, cutting edges BC and AD
+		{
+			double bcPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
+			double daPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
+			Vector2 pBC = m_b + (m_c - m_b) * bcPosition;
+			Vector2 pDA = m_d + (m_a - m_d) * daPosition;
+			Quad q1(Random::NextUInt64(), m_a, m_b, pBC, pDA);
+			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			Quad q2(Random::NextUInt64(), pDA, pBC, m_c, m_d);
+			q2.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			q1.Subdivide(obj);
+			q2.Subdivide(obj);
+		}
+		break;
+		case QUAD_DIVIDE_V_CUT: // Divide quad in two parts, cutting edges AB and CD
+		{
+			double abPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
+			double cdPosition = Random::NextDouble(QUAD_EDGE_DIVISION_CENTER - QUAD_EDGE_DIVISION_INTERVAL_HALF, QUAD_EDGE_DIVISION_CENTER + QUAD_EDGE_DIVISION_INTERVAL_HALF);
+			Vector2 pAB = m_a + (m_b - m_a) * abPosition;
+			Vector2 pCD = m_d + (m_c - m_d) * cdPosition;
+			Quad q1(Random::NextUInt64(), m_a, pAB, pCD, m_d);
+			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
+			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			Quad q2(Random::NextUInt64(), pAB, m_b, m_c, pCD);
+			q2.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, roadSize);
+			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			q1.Subdivide(obj);
+			q2.Subdivide(obj);
+		}
+		break;
+		case QUAD_DIVIDE_AC_CUT: // Divide quad in two part, cutting angles at corners A and C
 		{
 			Triangle t1(Random::NextUInt64(), m_a, m_b, m_c);
 			t1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, roadSize);
@@ -171,8 +176,8 @@ void Quad::Subdivide(std::ofstream & obj)
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 		}
-			break;
-		case 5:
+		break;
+		case QUAD_DIVIDE_BD_CUT: // Divide quad in two part, cutting angles at corners B and D
 		{
 			Triangle t1(Random::NextUInt64(), m_b, m_c, m_d);
 			t1.Shrink(IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, roadSize);
@@ -184,11 +189,13 @@ void Quad::Subdivide(std::ofstream & obj)
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 		}
-			break;
+		break;
 		default:
-			break;
+		{
+
 		}
-		tab--;
+		break;
+		}
 	}
 }
 

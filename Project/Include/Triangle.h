@@ -16,6 +16,8 @@ public:
 
 	inline Triangle(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(seed), m_a(a), m_b(b), m_c(c), m_ab(false), m_bc(false), m_ca(false) {}
 
+	int GetSubdivisionType(void) const;
+
 	virtual void Subdivide(std::ofstream & obj);
 	virtual void BuildNeighborhood(std::ofstream & obj);
 
