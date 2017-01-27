@@ -50,3 +50,19 @@ void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)
 	m_b = Line::Intersection(ab, bc);
 	m_c = Line::Intersection(bc, ca);
 }
+
+void Triangle::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawBuildingFloor (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawBuildingRoof (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawEmptySpace (Object & obj, BuildingSetting & setting)
+{
+}

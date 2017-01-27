@@ -20,6 +20,11 @@ public:
 	virtual void Subdivide(Object & obj);
 	virtual void BuildNeighborhood(Object & obj);
 
+    void DrawBuildingGround (Object & obj, BuildingSetting & setting);
+    void DrawBuildingFloor  (Object & obj, BuildingSetting & setting);
+    void DrawBuildingRoof   (Object & obj, BuildingSetting & setting);
+    void DrawEmptySpace     (Object & obj, BuildingSetting & setting);
+
 	inline virtual double Area(void) const
 	{
 		return fabs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;

@@ -60,7 +60,7 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     return type;
 }
 
-void Shape::BuildBuilding(Object &obj, const BuildingSetting & setting)
+void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 {
     Random::Seed(m_seed);
     uint32_t height = 0;
@@ -72,7 +72,7 @@ void Shape::BuildBuilding(Object &obj, const BuildingSetting & setting)
         {
             case GROUND:
             {
-                // WriteBuildingGround(obj)
+                DrawBuildingGround(obj, setting);
                 //obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
                 type = BuildGroundLevel (height, setting);
 
@@ -80,15 +80,15 @@ void Shape::BuildBuilding(Object &obj, const BuildingSetting & setting)
             }
             case FLOOR:
             {
+                DrawBuildingFloor(obj, setting);
                 // Shrink shape
-                // WriteBuildingFloor(obj);
-                //obj.WriteBox(this, this, height);
+                DrawBuildingFloor(obj, setting);
                 type = BuildFloorLevel (height, setting);
 
                 break;
             }
             case ROOF:
-                // WriteBuildingRoof(obj);
+                DrawBuildingRoof(obj, setting);
                 type = END;
 
             case END:
@@ -101,13 +101,13 @@ void Shape::BuildBuilding(Object &obj, const BuildingSetting & setting)
     }
 }
 
-void Shape::BuildEmptySpace(Object &obj, const BuildingSetting & setting)
+void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
 {
     // Fill with trees/bushes/whatever
-    // WriteEmptySpace(obj);
+    DrawEmptySpace(obj, setting);
 }
 
-void Shape::BuildTerrain(Object &obj, const BuildingSetting & setting)
+void Shape::BuildTerrain(Object &obj, BuildingSetting & setting)
 {
     FloorType type = (Random::NextDouble() > setting.Height.Min) ? NO_BUILDING : GROUND;
 
@@ -117,7 +117,7 @@ void Shape::BuildTerrain(Object &obj, const BuildingSetting & setting)
             BuildBuilding(obj, setting);
             break;
         case NONE:
-            // WriteEmptySpace(obj, setting)
+            BuildEmptySpace(obj, setting);
         default:
             break;
     }

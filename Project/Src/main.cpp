@@ -15,7 +15,8 @@ int main(int argc, char **argv)
 
     Object obj("Output/test.obj");
 	q.Subdivide(obj);
-    //q.BuildTerrain (obj, Setting::GetInstance(q.A()));
+    //BuildingSetting s = Setting::GetInstance(q.A());
+    //q.BuildTerrain (obj, s);
 
 	std::cout << "Complete" << std::endl;
 	getchar();

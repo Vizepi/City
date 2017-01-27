@@ -295,3 +295,19 @@ void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, doubl
 	m_c = Line::Intersection(bc, cd);
 	m_d = Line::Intersection(cd, da);
 }
+
+void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting)
+{
+}
