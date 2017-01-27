@@ -1,6 +1,7 @@
 #include <Shape.h>
 #include <Random.h>
 #include <iostream>
+#include <Object.h>
 
 enum TerrainType
 {
@@ -59,12 +60,11 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     return type;
 }
 
-void Shape::BuildBuilding(Object obj, const BuildingSetting & setting)
+void Shape::BuildBuilding(Object &obj, const BuildingSetting & setting)
 {
     Random::Seed(m_seed);
     uint32_t height = 0;
     FloorType type = GROUND;
-    double floorSize = 3.0;
 
     while (type != END)
     {
@@ -72,23 +72,23 @@ void Shape::BuildBuilding(Object obj, const BuildingSetting & setting)
         {
             case GROUND:
             {
-                obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
+                // WriteBuildingGround(obj)
+                //obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
                 type = BuildGroundLevel (height, setting);
 
                 break;
             }
             case FLOOR:
             {
-                Shape shrinkedShape(*this);
-                shrinkedQuad.set
-
-                obj.WriteBox(this, this, height);
+                // Shrink shape
+                // WriteBuildingFloor(obj);
+                //obj.WriteBox(this, this, height);
                 type = BuildFloorLevel (height, setting);
 
                 break;
             }
             case ROOF:
-                // WriteRoof(obj);
+                // WriteBuildingRoof(obj);
                 type = END;
 
             case END:
@@ -101,16 +101,23 @@ void Shape::BuildBuilding(Object obj, const BuildingSetting & setting)
     }
 }
 
-void Shape::BuildTerrain(std::ofstream & obj, const BuildingSetting & setting)
+void Shape::BuildEmptySpace(Object &obj, const BuildingSetting & setting)
+{
+    // Fill with trees/bushes/whatever
+    // WriteEmptySpace(obj);
+}
+
+void Shape::BuildTerrain(Object &obj, const BuildingSetting & setting)
 {
     FloorType type = (Random::NextDouble() > setting.Height.Min) ? NO_BUILDING : GROUND;
+
     switch (type)
     {
         case BUILDING:
             BuildBuilding(obj, setting);
             break;
         case NONE:
-            // WriteEmptySpace(obj)
+            // WriteEmptySpace(obj, setting)
         default:
             break;
     }

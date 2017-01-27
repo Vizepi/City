@@ -4,6 +4,7 @@
 
 #include <Vector.h>
 #include <Shape.h>
+#include <cmath>
 
 class Triangle : public Shape
 {
@@ -16,12 +17,12 @@ public:
 
 	inline Triangle(uint64_t seed, const Vector2 & a, const Vector2 & b, const Vector2 & c) : Shape(seed), m_a(a), m_b(b), m_c(c), m_ab(false), m_bc(false), m_ca(false) {}
 
-	virtual void Subdivide(std::ofstream & obj);
-	virtual void BuildNeighborhood(std::ofstream & obj);
+	virtual void Subdivide(Object & obj);
+	virtual void BuildNeighborhood(Object & obj);
 
 	inline virtual double Area(void) const
 	{
-		return abs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
+		return fabs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
 	}
 
 	inline Vector2 Center(void) const

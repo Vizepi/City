@@ -1,7 +1,8 @@
 #include <Triangle.h>
 #include <Line.h>
+#include <Object.h>
 
-void Triangle::Subdivide(std::ofstream & obj)
+void Triangle::Subdivide(Object & obj)
 {
 	obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
 	obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
@@ -9,7 +10,7 @@ void Triangle::Subdivide(std::ofstream & obj)
 	obj << "f -1 -2 -3\n";
 }
 
-void Triangle::BuildNeighborhood(std::ofstream & obj)
+void Triangle::BuildNeighborhood(Object & obj)
 {
 	uint64_t crtVersion = 1;
 	//
@@ -23,7 +24,7 @@ void Triangle::BuildNeighborhood(std::ofstream & obj)
 	{
 		BuildTerrain(obj, s);
 	}
-	
+
 	//--------------
 	// V1 - 1 Building + shrink
 	//--------------

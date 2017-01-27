@@ -11,7 +11,7 @@ Object::~Object()
     m_obj.close();
 }
 
-void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, double heightMax, bool openTop, bool openBottom)
+void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, double heightMax, bool fillTop, bool fillBottom)
 {
     // Bottom vertice
     m_obj << "v " << q1.A().X() << " " << q1.A().Y() << " " << heightMin << "\n"; // -8
@@ -25,13 +25,13 @@ void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, do
     m_obj << "v " << q2.D().X() << " " << q2.D().Y() << " " << heightMax << "\n"; // -1
 
     // Bottom faces
-    if (openBottom)
+    if (fillBottom)
     {
         m_obj << "f " << -8 << " " << -7 << " " << -6 << "\n";
         m_obj << "f " << -6 << " " << -5 << " " << -8 << "\n";
     }
     // Top faces
-    if (openTop)
+    if (fillTop)
     {
         m_obj << "f " << -4 << " " << -3 << " " << -2 << "\n";
         m_obj << "f " << -2 << " " << -1 << " " << -4 << "\n";
@@ -50,7 +50,7 @@ void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, do
     m_obj << "f " << -3 << " " << -7 << " " << -8 << "\n";
 }
 
-void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double heightMax, bool openTop, bool openBottom)
+void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double heightMax, bool fillTop, bool fillBottom)
 {
     // Bottom vertice
     m_obj << "v " << t1.A().X() << " " << t1.A().Y() << " " << heightMin << "\n"; // -6
@@ -62,12 +62,12 @@ void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double
     m_obj << "v " << t2.C().X() << " " << t2.C().Y() << " " << heightMax << "\n"; // -1
 
     // Bottom faces
-    if (openBottom)
+    if (fillBottom)
     {
         m_obj << "f " << -6 << " " << -5 << " " << -4 << "\n";
     }
     // Top faces
-    if (openTop)
+    if (fillTop)
     {
         m_obj << "f " << -3 << " " << -2 << " " << -1 << "\n";
     }
@@ -82,39 +82,39 @@ void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double
     m_obj << "f " << -2 << " " << -3 << " " << -6 << "\n";
 }
 
-void Object::WriteFloor(Quad q, double heightMin, double heightMax)
+void Object::WriteQuadFloor(Quad q, BuildingSetting bs, int height)
 {
-    m_obj.WriteBox(this, this, // Shrinked Quad
-        height * Setting::FloorSize,
-        height * Setting::FloorSize + Setting::FloorSpaceSize,
+    WriteQuadBox(q, q, // Shrinked Quad
+        height * bs.FloorSize,
+        height * bs.FloorSize + bs.FloorSpaceSize,
         false, false);
-    obj.WriteQuadBox(this, this,
-        height * (Setting::FloorSize + Setting::FloorSpaceSize) + Setting::FloorSpaceSize,
-        (height + 1) * Setting::FloorSize,
+    WriteQuadBox(q, q,
+        height * (bs.FloorSize + bs.FloorSpaceSize) + bs.FloorSpaceSize,
+        (height + 1) * bs.FloorSize,
         true, true);
 }
 
-void Object::WriteFloor(Triangle t, double heightMin, double heightMax)
+void Object::WriteTriangleFloor(Triangle t, BuildingSetting bs, int height)
 {
 
 }
 
-void Object::WriteRoof(Quad q, double heightMin, double heightMax)
+void Object::WriteQuadRoof(Quad q, BuildingSetting bs, int height)
 {
 
 }
 
-void Object::WriteRoof(Triangle t, double heightMin, double heightMax)
+void Object::WriteTriangleRoof(Triangle t, BuildingSetting bs, int height)
 {
 
 }
 
-void Object::WriteEmptySpace(Quad q, double heightMin, double heightMax)
+void Object::WriteQuadEmptySpace(Quad q, BuildingSetting bs, int height)
 {
 
 }
 
-void Object::WriteEmptySpace(Triangle t, double heightMin, double heightMax)
+void Object::WriteTriangleEmptySpace(Triangle t, BuildingSetting bs, int height)
 {
 
 }

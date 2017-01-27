@@ -1,6 +1,7 @@
 #include <Quad.h>
 #include <Line.h>
 #include <Random.h>
+#include <Object.h>
 #include <iostream>
 #include <vector>
 
@@ -10,7 +11,7 @@ struct Type
 	double size;
 };
 
-void Quad::Subdivide(std::ofstream & obj)
+void Quad::Subdivide(Object & obj)
 {
 	Random::Seed(m_seed);
 	uint64_t type = Random::NextDouble() < 0.5 ? 2 : Random::NextDouble() < 0.5 ? 0 : 1;
@@ -192,7 +193,7 @@ void Quad::Subdivide(std::ofstream & obj)
 	}
 }
 
-void Quad::BuildNeighborhood(std::ofstream & obj) // Add const vector3 &v with the downtown
+void Quad::BuildNeighborhood(Object & obj) // Add const vector3 &v with the downtown
 {
 	uint64_t crtVersion = 1;
 	//
