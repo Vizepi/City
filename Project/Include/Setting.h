@@ -28,6 +28,8 @@ struct BuildingSetting
 {
 	BuildingSize Size;
 	BuildingSize Height;
+	double FloorSize;
+	double FloorSpaceSize;
 };
 
 struct ShapeDivision

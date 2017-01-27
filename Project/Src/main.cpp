@@ -3,6 +3,7 @@
 #include <Triangle.h>
 #include <Quad.h>
 #include <Random.h>
+#include <Object.h>
 
 int main(int argc, char **argv)
 {
@@ -12,10 +13,10 @@ int main(int argc, char **argv)
 	Random::Seed(0);
     Quad q(Random::NextUInt64(), Vector2(0, 10000), Vector2(), Vector2(10000, 0), Vector2(10000, 10000));
 
-    std::ofstream obj("Output/test.obj");
+    Object obj("Output/test.obj");
 	q.Subdivide(obj);
-	obj.close();
-    //q.BuildTerrain (obj, Setting::GetInstance(q.A()));
+    //BuildingSetting s = Setting::GetInstance(q.A());
+    //q.BuildTerrain (obj, s);
 
 	std::cout << "Complete" << std::endl;
 	getchar();

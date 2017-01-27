@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cmath>
+#include <Setting.h>
 
 #include <Vector.h>
 #include <Shape.h>
+#include <cmath>
 
 class Triangle : public Shape
 {
@@ -18,12 +19,17 @@ public:
 
 	int GetSubdivisionType(void) const;
 
-	virtual void Subdivide(std::ofstream & obj);
-	virtual void BuildNeighborhood(std::ofstream & obj);
+	virtual void Subdivide(Object & obj);
+	virtual void BuildNeighborhood(Object & obj);
+
+    void DrawBuildingGround (Object & obj, BuildingSetting & setting);
+    void DrawBuildingFloor  (Object & obj, BuildingSetting & setting);
+    void DrawBuildingRoof   (Object & obj, BuildingSetting & setting);
+    void DrawEmptySpace     (Object & obj, BuildingSetting & setting);
 
 	inline virtual double Area(void) const
 	{
-		return abs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
+		return fabs(CrossProduct(m_a - m_b, m_a - m_c)) / 2.0;
 	}
 
 	inline Vector2 Center(void) const

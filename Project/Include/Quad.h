@@ -17,8 +17,14 @@ public:
 
 	int GetSubdivisionType(void) const;
 
-	virtual void Subdivide(std::ofstream & obj);
-	virtual void BuildNeighborhood(std::ofstream & obj);
+	virtual void Subdivide(Object & obj);
+	virtual void BuildNeighborhood(Object & obj);
+
+    void DrawBuildingGround (Object & obj, BuildingSetting & setting);
+    void DrawBuildingFloor  (Object & obj, BuildingSetting & setting);
+    void DrawBuildingRoof   (Object & obj, BuildingSetting & setting);
+    void DrawEmptySpace     (Object & obj, BuildingSetting & setting);
+
 	inline virtual double Area(void) const
 	{
 		return Triangle(m_a, m_b, m_c).Area() + Triangle(m_a, m_c, m_d).Area();

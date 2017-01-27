@@ -1,5 +1,6 @@
 #include <Triangle.h>
 #include <Line.h>
+#include <Object.h>
 #include <Random.h>
 #include <Quad.h>
 
@@ -85,7 +86,7 @@ int Triangle::GetSubdivisionType(void) const
 	return types[currentType].type;
 }
 
-void Triangle::Subdivide(std::ofstream & obj)
+void Triangle::Subdivide(Object & obj)
 {
 	Random::Seed(m_seed);
 	double area = Area();
@@ -95,10 +96,10 @@ void Triangle::Subdivide(std::ofstream & obj)
 	if (stopChance < Random::NextDouble())
 	{
 		//BuildNeighborhood(obj);
-		obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
-		obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
-		obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
-		obj << "f -1 -2 -3\n";
+		obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
+		obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
+		obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
+		obj.m_obj << "f -1 -2 -3\n";
 	}
 	else
 	{
@@ -248,7 +249,7 @@ void Triangle::Subdivide(std::ofstream & obj)
 	}
 }
 
-void Triangle::BuildNeighborhood(std::ofstream & obj)
+void Triangle::BuildNeighborhood(Object & obj)
 {
 	uint64_t crtVersion = 1;
 	//
@@ -262,7 +263,7 @@ void Triangle::BuildNeighborhood(std::ofstream & obj)
 	{
 		BuildTerrain(obj, s);
 	}
-	
+
 	//--------------
 	// V1 - 1 Building + shrink
 	//--------------
@@ -287,4 +288,20 @@ void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)
 	m_a = Line::Intersection(ab, ca);
 	m_b = Line::Intersection(ab, bc);
 	m_c = Line::Intersection(bc, ca);
+}
+
+void Triangle::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawBuildingFloor (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawBuildingRoof (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Triangle::DrawEmptySpace (Object & obj, BuildingSetting & setting)
+{
 }

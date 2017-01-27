@@ -1,6 +1,7 @@
 #include <Shape.h>
 #include <Random.h>
 #include <iostream>
+#include <Object.h>
 
 enum TerrainType
 {
@@ -59,7 +60,7 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     return type;
 }
 
-void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
+void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 {
     Random::Seed(m_seed);
     uint32_t height = 0;
@@ -71,20 +72,23 @@ void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
         {
             case GROUND:
             {
-                // WriteGround(obj);
+                DrawBuildingGround(obj, setting);
+                //obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
                 type = BuildGroundLevel (height, setting);
 
                 break;
             }
             case FLOOR:
             {
-                // WriteFloor(obj);
+                DrawBuildingFloor(obj, setting);
+                // Shrink shape
+                DrawBuildingFloor(obj, setting);
                 type = BuildFloorLevel (height, setting);
 
                 break;
             }
             case ROOF:
-                // WriteRoof(obj);
+                DrawBuildingRoof(obj, setting);
                 type = END;
 
             case END:
@@ -97,16 +101,23 @@ void Shape::BuildBuilding(std::ofstream & obj, const BuildingSetting & setting)
     }
 }
 
-void Shape::BuildTerrain(std::ofstream & obj, const BuildingSetting & setting)
+void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
+{
+    // Fill with trees/bushes/whatever
+    DrawEmptySpace(obj, setting);
+}
+
+void Shape::BuildTerrain(Object &obj, BuildingSetting & setting)
 {
     FloorType type = (Random::NextDouble() > setting.Height.Min) ? NO_BUILDING : GROUND;
+
     switch (type)
     {
         case BUILDING:
             BuildBuilding(obj, setting);
             break;
         case NONE:
-            // WriteEmptySpace(obj)
+            BuildEmptySpace(obj, setting);
         default:
             break;
     }

@@ -1,6 +1,7 @@
 #include <Quad.h>
 #include <Line.h>
 #include <Random.h>
+#include <Object.h>
 #include <iostream>
 #include <vector>
 
@@ -61,7 +62,7 @@ int Quad::GetSubdivisionType(void) const
 	return types[currentType].type;
 }
 
-void Quad::Subdivide(std::ofstream & obj)
+void Quad::Subdivide(Object & obj)
 {
 	Random::Seed(m_seed);
 	double area = Area();
@@ -71,11 +72,11 @@ void Quad::Subdivide(std::ofstream & obj)
 	if (stopChance < Random::NextDouble())
 	{
 		//BuildNeighborhood(obj);
-		obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
-		obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
-		obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
-		obj << "v " << m_d.X() << " " << m_d.Y() << " 0\n";
-		obj << "f -1 -2 -3 -4\n";
+		obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
+		obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
+		obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
+		obj.m_obj << "v " << m_d.X() << " " << m_d.Y() << " 0\n";
+		obj.m_obj << "f -1 -2 -3 -4\n";
 	}
 	else
 	{
@@ -199,7 +200,7 @@ void Quad::Subdivide(std::ofstream & obj)
 	}
 }
 
-void Quad::BuildNeighborhood(std::ofstream & obj) // Add const vector3 &v with the downtown
+void Quad::BuildNeighborhood(Object & obj) // Add const vector3 &v with the downtown
 {
 	uint64_t crtVersion = 1;
 	//
@@ -300,4 +301,20 @@ void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, doubl
 	m_b = Line::Intersection(ab, bc);
 	m_c = Line::Intersection(bc, cd);
 	m_d = Line::Intersection(cd, da);
+}
+
+void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting)
+{
+}
+
+void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting)
+{
 }
