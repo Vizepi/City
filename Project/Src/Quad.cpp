@@ -76,7 +76,7 @@ void Quad::Subdivide(Object & obj)
 		obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
 		obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
 		obj.m_obj << "v " << m_d.X() << " " << m_d.Y() << " 0\n";
-		obj.m_obj << "f -1 -2 -3 -4\n";
+		obj.m_obj << "f -4 -3 -2 -1\n";
 	}
 	else
 	{
