@@ -21,7 +21,5 @@ public:
     void WriteQuadEmptySpace(Quad q, BuildingSetting bs, int height);
     void WriteTriangleEmptySpace(Triangle t, BuildingSetting bs, int height);
 
-private:
-
 	std::ofstream m_obj;
 };
