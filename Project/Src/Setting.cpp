@@ -4,8 +4,6 @@
 /*static*/ uint64_t Setting::InfluencePointsCount = 0;
 /*static*/ BuildingSize Setting::FloorSize;
 /*static*/ BuildingSize Setting::FloorSpaceSize;
-/*static*/ ShapeDivision Setting::Quads;
-/*static*/ ShapeDivision Setting::Triangles;
 
 /*static*/ BuildingSetting Setting::GetInstance(const Vector2 & position)
 {
@@ -22,7 +20,7 @@
 		{
 			continue;
 		}
-		double y = Ease(x);
+		double y = Ease(1.0 - x);
 		instance.Height.Min += InfluencePoints[nPoint].setting.Height.Min * y;
 		instance.Height.Max += InfluencePoints[nPoint].setting.Height.Max * y;
 		instance.Size.Min += InfluencePoints[nPoint].setting.Size.Min * y;

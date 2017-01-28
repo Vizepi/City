@@ -5,12 +5,16 @@
 #include <iostream>
 #include <vector>
 
-#define QUAD_DIVIDE_GRID 0
-#define QUAD_DIVIDE_CROSS 1
-#define QUAD_DIVIDE_H_CUT 2
-#define QUAD_DIVIDE_V_CUT 3
-#define QUAD_DIVIDE_AC_CUT 4
-#define QUAD_DIVIDE_BD_CUT 5
+#define QUAD_DIVIDE_GRID	0
+#define QUAD_DIVIDE_CROSS	1
+#define QUAD_DIVIDE_H_CUT	2
+#define QUAD_DIVIDE_V_CUT	3
+#define QUAD_DIVIDE_AC_CUT	4
+#define QUAD_DIVIDE_BD_CUT	5
+
+#define QUAD_NEIGHBORHOOD_PARK			0
+#define QUAD_NEIGHBORHOOD_BUILDING		1
+#define QUAD_NEIGHBORHOOD_NEIGHBORHOOD	2
 
 struct Type
 {
@@ -71,12 +75,25 @@ void Quad::Subdivide(Object & obj)
 	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
 	if (stopChance < Random::NextDouble())
 	{
+		Quad q = GetInscribedRectangle();
 		//BuildNeighborhood(obj);
-		obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
-		obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
-		obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
-		obj.m_obj << "v " << m_d.X() << " " << m_d.Y() << " 0\n";
-		obj.m_obj << "f -4 -3 -2 -1\n";
+		/*
+		obj.m_obj << "v " << q.m_a.X() << " " << q.m_a.Y() << " 0\n";
+		obj.m_obj << "v " << q.m_b.X() << " " << q.m_b.Y() << " 0\n";
+		obj.m_obj << "v " << q.m_c.X() << " " << q.m_c.Y() << " 0\n";
+		obj.m_obj << "v " << q.m_d.X() << " " << q.m_d.Y() << " 0\n";
+		obj.m_obj << "f -4 -3 -2 -1\n";*/
+		BuildingSetting s = Setting::GetInstance(Center());
+		if(s.Height.Max > 0.0)
+		{
+			obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			//BuildBuilding(obj, s);
+			obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
+			obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
+			obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
+			obj.m_obj << "v " << m_d.X() << " " << m_d.Y() << " 0\n";
+			obj.m_obj << "f -4 -3 -2 -1\n";
+		}
 	}
 	else
 	{
@@ -200,17 +217,53 @@ void Quad::Subdivide(Object & obj)
 	}
 }
 
-void Quad::BuildNeighborhood(Object & obj) // Add const vector3 &v with the downtown
+void Quad::BuildNeighborhood(Object & obj)
 {
-	uint64_t crtVersion = 1;
+	Random::Seed(m_seed);
+	uint64_t type = Random::NextDouble() < PARK_DENSITY ? QUAD_NEIGHBORHOOD_PARK : QUAD_NEIGHBORHOOD_NEIGHBORHOOD;
 	//
 	// Get settings
 	BuildingSetting s = Setting::GetInstance(Center());
 
+	if (type != QUAD_NEIGHBORHOOD_PARK)
+	{
+		if (s.Size.Max >= (m_b - m_a).Length() ||
+			s.Size.Max >= (m_c - m_b).Length() ||
+			s.Size.Max >= (m_d - m_c).Length() ||
+			s.Size.Max >= (m_a - m_d).Length())
+		{
+			type = QUAD_NEIGHBORHOOD_BUILDING;
+		}
+	}
+
+	switch (type)
+	{
+		case QUAD_NEIGHBORHOOD_PARK:
+		{
+			BuildTerrain(obj, s);
+		}
+		break;
+		case QUAD_NEIGHBORHOOD_BUILDING:
+		{
+			BuildBuilding(obj, s);
+		}
+		break;
+		case QUAD_NEIGHBORHOOD_NEIGHBORHOOD:
+		{
+			
+		}
+		break;
+		default:
+		{
+
+		}
+		break;
+	}
+
 	//--------------
 	// V0 - 1 Building
 	//--------------
-	if (0 == crtVersion)
+	if (0 == type)
 	{
 		BuildTerrain(obj, s);
 	}
@@ -218,20 +271,18 @@ void Quad::BuildNeighborhood(Object & obj) // Add const vector3 &v with the down
 	//--------------
 	// V1 - 1 Building + shrink
 	//--------------
-	else if (1 == crtVersion)
+	else if (1 == type)
 	{
-		double walkWaySize = 5.0;
-		Shrink(walkWaySize, walkWaySize, walkWaySize, walkWaySize);
+		Shrink(SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE);
 		BuildTerrain(obj, s);
 	}
 	//--------------
 	// V2 - Neighborhood
 	//--------------
-	else if (2 == crtVersion)
+	else if (2 == type)
 	{
-		double walkWaySize = 5.0;
 		Quad innerQuad(*this);
-		innerQuad.Shrink(walkWaySize, walkWaySize, walkWaySize, walkWaySize);
+		innerQuad.Shrink(SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE);
 
 		//
 		// Bat 1
@@ -301,6 +352,95 @@ void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, doubl
 	m_b = Line::Intersection(ab, bc);
 	m_c = Line::Intersection(bc, cd);
 	m_d = Line::Intersection(cd, da);
+}
+
+Quad Quad::GetInscribedRectangle(void) const
+{
+	Line ab_cd = Line(m_a + (m_b - m_a) / 2.0, m_c + (m_d - m_c) / 2.0);
+	Line bc_da = Line(m_b + (m_c - m_b) / 2.0, m_d + (m_a - m_d) / 2.0);
+	Line o_ab_cd(ab_cd.Center(), ab_cd.Center() + ab_cd.Orthogonal());
+	Line o_bc_da(bc_da.Center(), bc_da.Center() + bc_da.Orthogonal());
+	double d_ab_cd = (ab_cd.A() - ab_cd.B()).Length();
+	double d_bc_da = (bc_da.A() - bc_da.B()).Length();
+
+	// Select shortest distance between opposite edges centers
+	Line* l = nullptr;
+	Line* o = nullptr;
+	const Vector2* a = nullptr, *b = nullptr, *c = nullptr, *d = nullptr;
+	if (d_ab_cd > d_bc_da)
+	{
+		l = &ab_cd;
+		o = &o_ab_cd;
+		a = &m_a;
+		b = &m_b;
+		c = &m_c;
+		d = &m_d;
+	}
+	else
+	{
+		l = &bc_da;
+		o = &o_bc_da;
+		a = &m_b;
+		b = &m_c;
+		c = &m_d;
+		d = &m_a;
+	}
+
+	double distA = 0.0, distB = 0.0, distC = 0.0, distD = 0.0;
+
+	double d1 = Line::Distance(*l, *a);
+	double d2 = Line::Distance(*l, *d);
+	if (d1 < d2)
+	{
+		distA = -Line::OrientedDistance(*l, *a);
+	}
+	else
+	{
+		distA = -Line::OrientedDistance(*l, *d);
+	}
+	d1 = Line::Distance(*l, *b);
+	d2 = Line::Distance(*l, *c);
+	if (d1 < d2)
+	{
+		distB = -Line::OrientedDistance(*l, *b);
+	}
+	else
+	{
+		distB = -Line::OrientedDistance(*l, *c);
+	}
+	d1 = Line::Distance(*o, *a);
+	d2 = Line::Distance(*o, *b);
+	if (d1 < d2)
+	{
+		distC = Line::OrientedDistance(*o, *a);
+	}
+	else
+	{
+		distC = Line::OrientedDistance(*o, *b);
+	}
+	d1 = Line::Distance(*o, *c);
+	d2 = Line::Distance(*o, *d);
+	if (d1 < d2)
+	{
+		distD = Line::OrientedDistance(*o, *c);
+	}
+	else
+	{
+		distD = Line::OrientedDistance(*o, *d);
+	}
+
+	Line l1(*l), l2(*l);
+	Line l3(*o), l4(*o);
+	l1.Translation(distA);
+	l2.Translation(distB);
+	l3.Translation(distC);
+	l4.Translation(distD);
+
+	return Quad(
+		Line::Intersection(l1, l3), 
+		Line::Intersection(l4, l1),
+		Line::Intersection(l2, l4), 
+		Line::Intersection(l3, l2));
 }
 
 void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)

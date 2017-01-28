@@ -5,7 +5,7 @@
 #include <Vector.h>
 
 #define ROAD_SIZE_COEF 36.0
-#define SIDEWALK_SIZE 2.0
+#define SIDEWALK_SIZE 3.0
 #define SIDEWALK_TOTAL_SIZE SIDEWALK_SIZE * 2.0
 
 // DIVISION
@@ -17,6 +17,7 @@
 #define TRIANGLE_EDGE_DIVISION_INTERVAL_HALF (TRIANGLE_EDGE_DIVISION_INTERVAL / 2.0)
 #define TRIANGLE_EDGE_DIVISION_CENTER 0.5
 
+#define PARK_DENSITY 0.05
 
 struct BuildingSize
 {
@@ -30,12 +31,6 @@ struct BuildingSetting
 	BuildingSize Height;
 	double FloorSize;
 	double FloorSpaceSize;
-};
-
-struct ShapeDivision
-{
-	double Probabilities[256];
-	uint64_t Count;
 };
 
 struct InfluencePoint
@@ -52,8 +47,6 @@ struct Setting
 	static uint64_t			InfluencePointsCount;
 	static BuildingSize		FloorSize;
 	static BuildingSize		FloorSpaceSize;
-	static ShapeDivision	Quads;
-	static ShapeDivision	Triangles;
 
 	static BuildingSetting	GetInstance(const Vector2 & position);
 	static inline double	Ease(double x) { double y = 1.0 - x * x; return fmax(0.0, fmin(1.0, 1.0 - y * y * y)); }

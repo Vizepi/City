@@ -27,27 +27,27 @@ void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, do
     // Bottom faces
     if (fillBottom)
     {
-        m_obj << "f " << -8 << " " << -7 << " " << -6 << "\n";
-        m_obj << "f " << -6 << " " << -5 << " " << -8 << "\n";
+        m_obj << "f " << -6 << " " << -7 << " " << -8 << "\n";
+        m_obj << "f " << -6 << " " << -8 << " " << -7 << "\n";
     }
     // Top faces
     if (fillTop)
     {
         m_obj << "f " << -4 << " " << -3 << " " << -2 << "\n";
-        m_obj << "f " << -2 << " " << -1 << " " << -4 << "\n";
+        m_obj << "f " << -4 << " " << -2 << " " << -1 << "\n";
     }
     // Back face
-    m_obj << "f " << -3 << " " << -2 << " " << -7 << "\n";
-    m_obj << "f " << -2 << " " << -6 << " " << -7 << "\n";
+    m_obj << "f " << -7 << " " << -3 << " " << -2 << "\n";
+    m_obj << "f " << -7 << " " << -2 << " " << -6 << "\n";
     // Right face
-    m_obj << "f " << -1 << " " << -2 << " " << -5 << "\n";
-    m_obj << "f " << -2 << " " << -6 << " " << -5 << "\n";
+    m_obj << "f " << -6 << " " << -2 << " " << -1 << "\n";
+    m_obj << "f " << -6 << " " << -1 << " " << -5 << "\n";
     // Front face
-    m_obj << "f " << -4 << " " << -5 << " " << -8 << "\n";
-    m_obj << "f " << -4 << " " << -1 << " " << -3 << "\n";
+    m_obj << "f " << -5 << " " << -1 << " " << -4 << "\n";
+    m_obj << "f " << -5 << " " << -4 << " " << -8 << "\n";
     // Left face
-    m_obj << "f " << -4 << " " << -3 << " " << -8 << "\n";
-    m_obj << "f " << -3 << " " << -7 << " " << -8 << "\n";
+    m_obj << "f " << -8 << " " << -4 << " " << -3 << "\n";
+    m_obj << "f " << -8 << " " << -3 << " " << -7 << "\n";
 }
 
 void Object::WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double heightMax, bool fillTop, bool fillBottom)

@@ -8,13 +8,13 @@
 #define M_PI 3.14159265359
 #endif
 
-#define TRIANGLE_DIVIDE_TRI 0
-#define TRIANGLE_DIVIDE_A 1
-#define TRIANGLE_DIVIDE_B 2
-#define TRIANGLE_DIVIDE_C 3
-#define TRIANGLE_DIVIDE_QUAD_A 4
-#define TRIANGLE_DIVIDE_QUAD_B 5
-#define TRIANGLE_DIVIDE_QUAD_C 6
+#define TRIANGLE_DIVIDE_TRI		0
+#define TRIANGLE_DIVIDE_A		1
+#define TRIANGLE_DIVIDE_B		2
+#define TRIANGLE_DIVIDE_C		3
+#define TRIANGLE_DIVIDE_QUAD_A	4
+#define TRIANGLE_DIVIDE_QUAD_B	5
+#define TRIANGLE_DIVIDE_QUAD_C	6
 
 struct Type
 {
@@ -95,11 +95,15 @@ void Triangle::Subdivide(Object & obj)
 	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
 	if (stopChance < Random::NextDouble())
 	{
+		BuildingSetting s = Setting::GetInstance(Center());
 		//BuildNeighborhood(obj);
-		obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
-		obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
-		obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
-		obj.m_obj << "f -3 -2 -1\n";
+		if(s.Height.Max > 0.0)
+		{
+			obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
+			obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
+			obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
+			obj.m_obj << "f -3 -2 -1\n";
+		}
 	}
 	else
 	{

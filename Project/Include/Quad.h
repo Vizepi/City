@@ -38,6 +38,8 @@ public:
 	inline void Shrink(double roadSize) { Shrink(roadSize, roadSize, roadSize, roadSize); }
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA);
 
+	Quad GetInscribedRectangle(void) const;
+
 	// Accessors
 	inline const Vector2 & A(void) const { return m_a; }
 	inline const Vector2 & B(void) const { return m_b; }
