@@ -130,10 +130,12 @@ void Triangle::Subdivide(Object & obj)
 			Triangle t4(Random::NextUInt64(), pAB, pBC, pCA);
 			t4.Shrink(roadSize, roadSize, roadSize);
 			t4.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 			t3.Subdivide(obj);
 			t4.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_A: // Divide triangle in two part, cutting angle A and edge BC
@@ -146,8 +148,10 @@ void Triangle::Subdivide(Object & obj)
 			Triangle t2(Random::NextUInt64(), m_a, pBC, m_c);
 			t2.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCA() ? 0.0 : roadSize);
 			t2.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_B: // Divide triangle in two part, cutting angle B and edge CA
@@ -160,8 +164,10 @@ void Triangle::Subdivide(Object & obj)
 			Triangle t2(Random::NextUInt64(), m_b, pCA, m_a);
 			t2.Shrink(roadSize, IsShrinkedCA() ? 0.0 : roadSize, IsShrinkedAB() ? 0.0 : roadSize);
 			t2.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_C: // Divide triangle in two part, cutting angle C and edge AB
@@ -174,8 +180,10 @@ void Triangle::Subdivide(Object & obj)
 			Triangle t2(Random::NextUInt64(), m_c, pAB, m_b);
 			t2.Shrink(roadSize, IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize);
 			t2.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_QUAD_A: // Divide triangle in two triangles for corners B and C and a quad in corner A
@@ -195,9 +203,11 @@ void Triangle::Subdivide(Object & obj)
 			Quad q1(Random::NextUInt64(), m_a, pAB, pBC, pCA);
 			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, roadSize, roadSize, IsShrinkedCA() ? 0.0 : roadSize);
 			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 			q1.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_QUAD_B: // Divide triangle in two triangles for corners C and A and a quad in corner B
@@ -217,9 +227,11 @@ void Triangle::Subdivide(Object & obj)
 			Quad q1(Random::NextUInt64(), pAB, m_b, pBC, pCA);
 			q1.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, roadSize, roadSize);
 			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 			q1.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case TRIANGLE_DIVIDE_QUAD_C: // Divide triangle in two triangles for corners A and B and a quad in corner C
@@ -239,9 +251,11 @@ void Triangle::Subdivide(Object & obj)
 			Quad q1(Random::NextUInt64(), pAB, pBC, m_c, pCA);
 			q1.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCA() ? 0.0 : roadSize, roadSize);
 			q1.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 			q1.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		default:

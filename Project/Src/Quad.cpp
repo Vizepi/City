@@ -86,7 +86,8 @@ void Quad::Subdivide(Object & obj)
 		BuildingSetting s = Setting::GetInstance(Center());
 		if(s.Height.Max > 0.0)
 		{
-			obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			BuildNeighborhood(obj);
 			//BuildBuilding(obj, s);
 			obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
 			obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
@@ -123,10 +124,12 @@ void Quad::Subdivide(Object & obj)
 			Quad q4(Random::NextUInt64(), pDA, center, pCD, m_d);
 			q4.Shrink(roadSize, roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
 			q4.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			q1.Subdivide(obj);
 			q2.Subdivide(obj);
 			q3.Subdivide(obj);
 			q4.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case QUAD_DIVIDE_CROSS: // Divide quad in four parts, cuttings angles
@@ -144,10 +147,12 @@ void Quad::Subdivide(Object & obj)
 			Triangle t4(Random::NextUInt64(), m_d, m_a, center);
 			t4.Shrink(IsShrinkedDA() ? 0.0 : roadSize, roadSize, roadSize);
 			t4.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
 			t3.Subdivide(obj);
 			t4.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case QUAD_DIVIDE_H_CUT: // Divide quad in two parts, cutting edges BC and AD
@@ -162,8 +167,10 @@ void Quad::Subdivide(Object & obj)
 			Quad q2(Random::NextUInt64(), pDA, pBC, m_c, m_d);
 			q2.Shrink(roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize);
 			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			q1.Subdivide(obj);
 			q2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case QUAD_DIVIDE_V_CUT: // Divide quad in two parts, cutting edges AB and CD
@@ -178,8 +185,10 @@ void Quad::Subdivide(Object & obj)
 			Quad q2(Random::NextUInt64(), pAB, m_b, m_c, pCD);
 			q2.Shrink(IsShrinkedAB() ? 0.0 : roadSize, IsShrinkedBC() ? 0.0 : roadSize, IsShrinkedCD() ? 0.0 : roadSize, roadSize);
 			q2.SetABShrinked(true).SetBCShrinked(true).SetCDShrinked(true).SetDAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			q1.Subdivide(obj);
 			q2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case QUAD_DIVIDE_AC_CUT: // Divide quad in two part, cutting angles at corners A and C
@@ -191,8 +200,10 @@ void Quad::Subdivide(Object & obj)
 			t2.Shrink(IsShrinkedCD() ? 0.0 : roadSize, IsShrinkedDA() ? 0.0 : roadSize, roadSize);
 			t1.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
 			t1.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		case QUAD_DIVIDE_BD_CUT: // Divide quad in two part, cutting angles at corners B and D
@@ -204,8 +215,10 @@ void Quad::Subdivide(Object & obj)
 			t2.Shrink(IsShrinkedDA() ? 0.0 : roadSize, IsShrinkedAB() ? 0.0 : roadSize, roadSize);
 			t1.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
 			t1.SetABShrinked(true).SetBCShrinked(true).SetCAShrinked(true);
+			uint64_t seed = Random::NextUInt64();
 			t1.Subdivide(obj);
 			t2.Subdivide(obj);
+			Random::Seed(seed);
 		}
 		break;
 		default:
@@ -227,10 +240,10 @@ void Quad::BuildNeighborhood(Object & obj)
 
 	if (type != QUAD_NEIGHBORHOOD_PARK)
 	{
-		if (s.Size.Max >= (m_b - m_a).Length() ||
-			s.Size.Max >= (m_c - m_b).Length() ||
-			s.Size.Max >= (m_d - m_c).Length() ||
-			s.Size.Max >= (m_a - m_d).Length())
+		if (s.Size.Min * 2.0 >= (m_b - m_a).Length() ||
+			s.Size.Min * 2.0 >= (m_c - m_b).Length() ||
+			s.Size.Min * 2.0 >= (m_d - m_c).Length() ||
+			s.Size.Min * 2.0 >= (m_a - m_d).Length())
 		{
 			type = QUAD_NEIGHBORHOOD_BUILDING;
 		}
@@ -246,11 +259,64 @@ void Quad::BuildNeighborhood(Object & obj)
 		case QUAD_NEIGHBORHOOD_BUILDING:
 		{
 			BuildBuilding(obj, s);
+			Quad q = GetInscribedRectangle();
+			obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
 		}
 		break;
 		case QUAD_NEIGHBORHOOD_NEIGHBORHOOD:
 		{
-			
+			Vector2 AB(m_b - m_a);
+			Vector2 BC(m_c - m_b);
+			Vector2 CD(m_d - m_c);
+			Vector2 DA(m_a - m_d);
+
+			Vector2 oAB = AB.Orthogonal();
+			Vector2 oBC = (m_c - m_b).Orthogonal();
+			Vector2 oCD = (m_d - m_c).Orthogonal();
+			Vector2 oDA = (m_a - m_d).Orthogonal();
+
+			Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
+			Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
+			Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
+			Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
+			Line tC_D(Vector2(m_c), Vector2(m_c) + oCD);
+			Line tD_C(Vector2(m_d), Vector2(m_d) + oCD);
+			Line tD_A(Vector2(m_d), Vector2(m_d) + oDA);
+			Line tA_D(Vector2(m_a), Vector2(m_a) + oDA);
+
+			tA_B.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, AB.Length() / 2.0)));
+			tB_A.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, AB.Length() / 2.0)));
+			tB_C.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, BC.Length() / 2.0)));
+			tC_B.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, BC.Length() / 2.0)));
+			tC_D.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, CD.Length() / 2.0)));
+			tD_C.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, CD.Length() / 2.0)));
+			tD_A.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, DA.Length() / 2.0)));
+			tA_D.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, DA.Length() / 2.0)));
+
+			Quad cornerA(
+				m_a, 
+				Line::Intersection(Line(m_a, m_b), tA_B), 
+				Line::Intersection(tA_B, tA_D),
+				Line::Intersection(tA_D, Line(m_a, m_d)));
+			Quad cornerB(
+				m_b,
+				Line::Intersection(Line(m_b, m_c), tB_C),
+				Line::Intersection(tB_C, tB_A),
+				Line::Intersection(tB_A, Line(m_b, m_a)));
+			Quad cornerC(
+				m_c,
+				Line::Intersection(Line(m_c, m_d), tC_D),
+				Line::Intersection(tC_D, tC_B),
+				Line::Intersection(tC_B, Line(m_c, m_b)));
+			Quad cornerD(
+				m_d,
+				Line::Intersection(Line(m_d, m_a), tD_A),
+				Line::Intersection(tD_A, tD_C),
+				Line::Intersection(tD_C, Line(m_d, m_c)));
+			obj.WriteQuadBox(cornerA, cornerA, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			obj.WriteQuadBox(cornerB, cornerB, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			obj.WriteQuadBox(cornerC, cornerC, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			obj.WriteQuadBox(cornerD, cornerD, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
 		}
 		break;
 		default:
