@@ -267,19 +267,16 @@ void Triangle::Subdivide(Object & obj)
 	}
 }
 
-void Triangle::BuildNeighborhood(Object & obj)
+void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 {
 	uint64_t crtVersion = 1;
-	//
-	// Get settings
-	BuildingSetting s = Setting::GetInstance(Center());
 	
 	//--------------
 	// V0 - 1 Building
 	//--------------
 	if(0 == crtVersion)
 	{
-		BuildTerrain(obj, s);
+		BuildTerrain(obj, setting);
 	}
 
 	//--------------
@@ -289,7 +286,7 @@ void Triangle::BuildNeighborhood(Object & obj)
 	{
 		double walkWaySize = 5.0;
 		Shrink(walkWaySize);
-		BuildTerrain(obj, s);
+		BuildTerrain(obj, setting);
 	}
 }
 

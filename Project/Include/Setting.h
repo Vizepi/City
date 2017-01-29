@@ -29,6 +29,9 @@ struct BuildingSetting
 {
 	BuildingSize Size;
 	BuildingSize Height;
+	BuildingSize Neighborhood;
+	double PeakSize;
+	double PeakProbability;
 	double FloorSize;
 	double FloorSpaceSize;
 };
@@ -36,6 +39,7 @@ struct BuildingSetting
 struct InfluencePoint
 {
 	BuildingSetting setting;
+	BuildingSetting border;
 	Vector2			position;
 	double			radius;
 };

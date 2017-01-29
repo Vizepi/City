@@ -2,8 +2,10 @@
 #include <Line.h>
 #include <Random.h>
 #include <Object.h>
+
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #define QUAD_DIVIDE_GRID	0
 #define QUAD_DIVIDE_CROSS	1
@@ -71,6 +73,7 @@ void Quad::Subdivide(Object & obj)
 	Random::Seed(m_seed);
 	double area = Area();
 	uint64_t type = GetSubdivisionType();
+	BuildingSetting setting = Setting::GetInstance(Center());
 
 	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
 	if (stopChance < Random::NextDouble())
@@ -83,11 +86,10 @@ void Quad::Subdivide(Object & obj)
 		obj.m_obj << "v " << q.m_c.X() << " " << q.m_c.Y() << " 0\n";
 		obj.m_obj << "v " << q.m_d.X() << " " << q.m_d.Y() << " 0\n";
 		obj.m_obj << "f -4 -3 -2 -1\n";*/
-		BuildingSetting s = Setting::GetInstance(Center());
-		if(s.Height.Max > 0.0)
+		if (setting.Height.Max > 0.0)
 		{
 			//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
-			BuildNeighborhood(obj);
+			BuildNeighborhood(obj, setting);
 			//BuildBuilding(obj, s);
 			obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
 			obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
@@ -230,20 +232,22 @@ void Quad::Subdivide(Object & obj)
 	}
 }
 
-void Quad::BuildNeighborhood(Object & obj)
+int Shuffler(int i)
+{
+	return Random::NextInt64(0, i - 1);
+}
+
+void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 {
 	Random::Seed(m_seed);
 	uint64_t type = Random::NextDouble() < PARK_DENSITY ? QUAD_NEIGHBORHOOD_PARK : QUAD_NEIGHBORHOOD_NEIGHBORHOOD;
-	//
-	// Get settings
-	BuildingSetting s = Setting::GetInstance(Center());
 
 	if (type != QUAD_NEIGHBORHOOD_PARK)
 	{
-		if (s.Size.Min * 2.0 >= (m_b - m_a).Length() ||
-			s.Size.Min * 2.0 >= (m_c - m_b).Length() ||
-			s.Size.Min * 2.0 >= (m_d - m_c).Length() ||
-			s.Size.Min * 2.0 >= (m_a - m_d).Length())
+		if (setting.Size.Min * 2.0 >= (m_b - m_a).Length() ||
+			setting.Size.Min * 2.0 >= (m_c - m_b).Length() ||
+			setting.Size.Min * 2.0 >= (m_d - m_c).Length() ||
+			setting.Size.Min * 2.0 >= (m_a - m_d).Length())
 		{
 			type = QUAD_NEIGHBORHOOD_BUILDING;
 		}
@@ -251,79 +255,170 @@ void Quad::BuildNeighborhood(Object & obj)
 
 	switch (type)
 	{
-		case QUAD_NEIGHBORHOOD_PARK:
+	case QUAD_NEIGHBORHOOD_PARK:
+	{
+		BuildTerrain(obj, setting);
+	}
+	break;
+	case QUAD_NEIGHBORHOOD_BUILDING:
+	{
+		BuildBuilding(obj, setting);
+		Quad q = GetInscribedSquare();
+		obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+	}
+	break;
+	case QUAD_NEIGHBORHOOD_NEIGHBORHOOD:
+	{
+		Vector2 AB(m_b - m_a);
+		Vector2 BC(m_c - m_b);
+		Vector2 CD(m_d - m_c);
+		Vector2 DA(m_a - m_d);
+
+		Vector2 oAB = AB.Orthogonal();
+		Vector2 oBC = (m_c - m_b).Orthogonal();
+		Vector2 oCD = (m_d - m_c).Orthogonal();
+		Vector2 oDA = (m_a - m_d).Orthogonal();
+
+		Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
+		Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
+		Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
+		Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
+		Line tC_D(Vector2(m_c), Vector2(m_c) + oCD);
+		Line tD_C(Vector2(m_d), Vector2(m_d) + oCD);
+		Line tD_A(Vector2(m_d), Vector2(m_d) + oDA);
+		Line tA_D(Vector2(m_a), Vector2(m_a) + oDA);
+
+		tA_B.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
+		tB_A.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
+		tB_C.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, BC.Length() / 2.0)));
+		tC_B.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, BC.Length() / 2.0)));
+		tC_D.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, CD.Length() / 2.0)));
+		tD_C.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, CD.Length() / 2.0)));
+		tD_A.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, DA.Length() / 2.0)));
+		tA_D.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, DA.Length() / 2.0)));
+
+		Quad cornerA(
+			m_a,
+			Line::Intersection(Line(m_a, m_b), tA_B),
+			Line::Intersection(tA_B, tA_D),
+			Line::Intersection(tA_D, Line(m_a, m_d)));
+		Quad cornerB(
+			m_b,
+			Line::Intersection(Line(m_b, m_c), tB_C),
+			Line::Intersection(tB_C, tB_A),
+			Line::Intersection(tB_A, Line(m_b, m_a)));
+		Quad cornerC(
+			m_c,
+			Line::Intersection(Line(m_c, m_d), tC_D),
+			Line::Intersection(tC_D, tC_B),
+			Line::Intersection(tC_B, Line(m_c, m_b)));
+		Quad cornerD(
+			m_d,
+			Line::Intersection(Line(m_d, m_a), tD_A),
+			Line::Intersection(tD_A, tD_C),
+			Line::Intersection(tD_C, Line(m_d, m_c)));
+
+		// TODO check quads orientations (no self crossing with edges)
+
+		if (cornerA.IsWellFormed())
 		{
-			BuildTerrain(obj, s);
+			if (Random::NextDouble() < setting.PeakProbability)
+			{
+				Quad q = cornerA.GetInscribedSquare();
+				obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(cornerA, cornerA, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
 		}
-		break;
-		case QUAD_NEIGHBORHOOD_BUILDING:
+		if (cornerB.IsWellFormed())
 		{
-			BuildBuilding(obj, s);
-			Quad q = GetInscribedRectangle();
-			obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			if (Random::NextDouble() < setting.PeakProbability)
+			{
+				Quad q = cornerB.GetInscribedSquare();
+				obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(cornerB, cornerB, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
 		}
-		break;
-		case QUAD_NEIGHBORHOOD_NEIGHBORHOOD:
+		if (cornerC.IsWellFormed())
 		{
-			Vector2 AB(m_b - m_a);
-			Vector2 BC(m_c - m_b);
-			Vector2 CD(m_d - m_c);
-			Vector2 DA(m_a - m_d);
-
-			Vector2 oAB = AB.Orthogonal();
-			Vector2 oBC = (m_c - m_b).Orthogonal();
-			Vector2 oCD = (m_d - m_c).Orthogonal();
-			Vector2 oDA = (m_a - m_d).Orthogonal();
-
-			Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
-			Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
-			Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
-			Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
-			Line tC_D(Vector2(m_c), Vector2(m_c) + oCD);
-			Line tD_C(Vector2(m_d), Vector2(m_d) + oCD);
-			Line tD_A(Vector2(m_d), Vector2(m_d) + oDA);
-			Line tA_D(Vector2(m_a), Vector2(m_a) + oDA);
-
-			tA_B.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, AB.Length() / 2.0)));
-			tB_A.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, AB.Length() / 2.0)));
-			tB_C.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, BC.Length() / 2.0)));
-			tC_B.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, BC.Length() / 2.0)));
-			tC_D.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, CD.Length() / 2.0)));
-			tD_C.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, CD.Length() / 2.0)));
-			tD_A.Translation(-Random::NextDouble(s.Size.Min, fmin(s.Size.Max, DA.Length() / 2.0)));
-			tA_D.Translation(Random::NextDouble(s.Size.Min, fmin(s.Size.Max, DA.Length() / 2.0)));
-
-			Quad cornerA(
-				m_a, 
-				Line::Intersection(Line(m_a, m_b), tA_B), 
-				Line::Intersection(tA_B, tA_D),
-				Line::Intersection(tA_D, Line(m_a, m_d)));
-			Quad cornerB(
-				m_b,
-				Line::Intersection(Line(m_b, m_c), tB_C),
-				Line::Intersection(tB_C, tB_A),
-				Line::Intersection(tB_A, Line(m_b, m_a)));
-			Quad cornerC(
-				m_c,
-				Line::Intersection(Line(m_c, m_d), tC_D),
-				Line::Intersection(tC_D, tC_B),
-				Line::Intersection(tC_B, Line(m_c, m_b)));
-			Quad cornerD(
-				m_d,
-				Line::Intersection(Line(m_d, m_a), tD_A),
-				Line::Intersection(tD_A, tD_C),
-				Line::Intersection(tD_C, Line(m_d, m_c)));
-			obj.WriteQuadBox(cornerA, cornerA, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
-			obj.WriteQuadBox(cornerB, cornerB, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
-			obj.WriteQuadBox(cornerC, cornerC, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
-			obj.WriteQuadBox(cornerD, cornerD, 0.0, Random::NextDouble(s.Height.Min, s.Height.Max), true, false);
+			if (Random::NextDouble() < setting.PeakProbability)
+			{
+				Quad q = cornerC.GetInscribedSquare();
+				obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(cornerC, cornerC, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
 		}
-		break;
-		default:
+		if (cornerD.IsWellFormed())
 		{
+			if (Random::NextDouble() < setting.PeakProbability)
+			{
+				Quad q = cornerD.GetInscribedSquare();
+				obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(cornerD, cornerD, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
+		}
+
+		const Vector2 * as[4] = { &(cornerA.B()), &(cornerB.B()), &(cornerC.B()), &(cornerD.B()) };
+		const Vector2 * bs[4] = { &(cornerB.D()), &(cornerC.D()), &(cornerD.D()), &(cornerA.D()) };
+		const Vector2 * a, *b;
+
+
+		for (uint64_t i = 0; i < 4; ++i)
+		{
+			a = as[i];
+			b = bs[i];
+
+			double N = (*b - *a).Length();
+			uint64_t buildingCount = 0;
+			std::vector<double> sizes;
+			for (;;)
+			{
+				if (N > setting.Size.Min + setting.Size.Max)
+				{
+					double size = Random::NextDouble(setting.Size.Min, setting.Size.Max);
+					sizes.push_back(size);
+					N -= size;
+				}
+				else if (N > setting.Size.Min)
+				{
+					double size = Random::NextDouble(setting.Size.Min, N);
+					sizes.push_back(size);
+					N -= size;
+				}
+				else
+				{
+					break;
+				}
+			}
+			uint64_t gapCount = sizes.size() + 1;
+			double gapSize = -N / gapCount;
+			for (uint64_t i = 0; i < gapCount; ++i)
+			{
+				sizes.push_back(gapSize);
+			}
+			std::random_shuffle(sizes.begin(), sizes.end(), Shuffler);
+			// Positives are buildings, negatives are gaps
 
 		}
-		break;
+
+	}
+	break;
+	default:
+	{
+
+	}
+	break;
 	}
 
 	//--------------
@@ -331,7 +426,7 @@ void Quad::BuildNeighborhood(Object & obj)
 	//--------------
 	if (0 == type)
 	{
-		BuildTerrain(obj, s);
+		BuildTerrain(obj, setting);
 	}
 
 	//--------------
@@ -340,7 +435,7 @@ void Quad::BuildNeighborhood(Object & obj)
 	else if (1 == type)
 	{
 		Shrink(SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE);
-		BuildTerrain(obj, s);
+		BuildTerrain(obj, setting);
 	}
 	//--------------
 	// V2 - Neighborhood
@@ -356,7 +451,7 @@ void Quad::BuildNeighborhood(Object & obj)
 		Vector2 b = Projection(Vector2(innerQuad.A() - m_a), Vector2(m_b - m_a)); // innerQuad.A() on m_a m_b
 		Vector2 c = innerQuad.A();
 		Vector2 d = Projection(Vector2(innerQuad.A() - m_a), Vector2(m_d - m_a));
-		innerQuad.BuildTerrain(obj, s);
+		innerQuad.BuildTerrain(obj, setting);
 	}
 
 	//
@@ -503,24 +598,48 @@ Quad Quad::GetInscribedRectangle(void) const
 	l4.Translation(distD);
 
 	return Quad(
-		Line::Intersection(l1, l3), 
+		Line::Intersection(l1, l3),
 		Line::Intersection(l4, l1),
-		Line::Intersection(l2, l4), 
+		Line::Intersection(l2, l4),
 		Line::Intersection(l3, l2));
 }
 
-void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+Quad Quad::GetInscribedSquare(void) const
+{
+	Quad q = GetInscribedRectangle();
+	double lAB = (q.A() - q.B()).Length();
+	double lAD = (q.A() - q.D()).Length();
+	if (lAB < lAD)
+	{
+		q.Shrink((lAD - lAB) / 1.0, 0.0, (lAD - lAB) / 1.0, 0.0);
+	}
+	else
+	{
+		q.Shrink(0.0, (lAB - lAD) / 1.0, 0.0, (lAB - lAD) / 1.0);
+	}
+	return q;
+}
+bool Quad::IsWellFormed(void) const
+{
+	return
+		CrossProduct(m_b - m_a, m_d - m_a) > 0.0 &&
+		CrossProduct(m_c - m_b, m_a - m_b) > 0.0 &&
+		CrossProduct(m_d - m_c, m_b - m_c) > 0.0 &&
+		CrossProduct(m_a - m_d, m_c - m_d) > 0.0;
+}
+
+void Quad::DrawBuildingGround(Object & obj, BuildingSetting & setting)
 {
 }
 
-void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting)
+void Quad::DrawBuildingFloor(Object & obj, BuildingSetting & setting)
 {
 }
 
-void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting)
+void Quad::DrawBuildingRoof(Object & obj, BuildingSetting & setting)
 {
 }
 
-void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting)
+void Quad::DrawEmptySpace(Object & obj, BuildingSetting & setting)
 {
 }

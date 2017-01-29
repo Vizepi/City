@@ -18,7 +18,7 @@ public:
 	int GetSubdivisionType(void) const;
 
 	virtual void Subdivide(Object & obj);
-	virtual void BuildNeighborhood(Object & obj);
+	virtual void BuildNeighborhood(Object & obj, BuildingSetting& setting);
 
     void DrawBuildingGround (Object & obj, BuildingSetting & setting);
     void DrawBuildingFloor  (Object & obj, BuildingSetting & setting);
@@ -39,6 +39,8 @@ public:
 	void Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA);
 
 	Quad GetInscribedRectangle(void) const;
+	Quad GetInscribedSquare(void) const;
+	bool IsWellFormed(void) const;
 
 	// Accessors
 	inline const Vector2 & A(void) const { return m_a; }

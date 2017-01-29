@@ -12,7 +12,7 @@ public:
 	inline Shape(uint64_t seed) : m_seed(seed) {}
 	inline virtual ~Shape(void) {}
 	virtual void Subdivide(Object & obj) = 0;
-	virtual void BuildNeighborhood(Object & obj) = 0;
+	virtual void BuildNeighborhood(Object & obj, BuildingSetting& setting) = 0;
 
 	virtual double Area(void) const = 0;
 
