@@ -4,6 +4,8 @@
 /*static*/ uint64_t Setting::InfluencePointsCount = 0;
 /*static*/ BuildingSize Setting::FloorSize;
 /*static*/ BuildingSize Setting::FloorSpaceSize;
+/*static*/ double Setting::MaxNeighborhoodSize = 400.0;
+
 
 /*static*/ BuildingSetting Setting::GetInstance(const Vector2 & position)
 {

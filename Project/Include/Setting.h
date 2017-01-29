@@ -4,8 +4,8 @@
 #include <cmath>
 #include <Vector.h>
 
-#define ROAD_SIZE_COEF 36.0
-#define SIDEWALK_SIZE 3.0
+#define ROAD_SIZE_COEF 50.0
+#define SIDEWALK_SIZE 5.0
 #define SIDEWALK_TOTAL_SIZE SIDEWALK_SIZE * 2.0
 
 // DIVISION
@@ -51,10 +51,11 @@ struct Setting
 	static uint64_t			InfluencePointsCount;
 	static BuildingSize		FloorSize;
 	static BuildingSize		FloorSpaceSize;
+	static double			MaxNeighborhoodSize;
 
 	static BuildingSetting	GetInstance(const Vector2 & position);
 	static inline double	Ease(double x) { double y = 1.0 - x * x; return fmax(0.0, fmin(1.0, 1.0 - y * y * y)); }
-	static inline double	Ease(double x, double min, double max) { return Ease((fmax(min, fmin(max, x)) - min) / (max - min)); }
+	static inline double	Ease(double x, double min, double max) { return (min == max) ? min : Ease((fmax(min, fmin(max, x)) - min) / (max - min)); }
 	static inline double	EaseCentered(double x, double min, double max) { return Ease(2.0 * (fmax(min, fmin(max, x)) - min) / (max - min) - 1.0); }
 
 };

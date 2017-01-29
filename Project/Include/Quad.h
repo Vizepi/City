@@ -3,7 +3,8 @@
 #include <Vector.h>
 #include <Triangle.h>
 #include <Shape.h>
-#include "Line.h"
+#include <Random.h>
+#include <Line.h>
 
 class Quad : public Shape
 {
@@ -41,6 +42,10 @@ public:
 	Quad GetInscribedRectangle(void) const;
 	Quad GetInscribedSquare(void) const;
 	bool IsWellFormed(void) const;
+	inline static bool GetPeakChance(double area, const BuildingSetting& s)
+	{
+		return 0.001 * Random::NextDouble() * (area * area - s.Size.Min * s.Size.Min) / ((s.Size.Max * s.Size.Max) - (s.Size.Min * s.Size.Min)) < s.PeakProbability;
+	}
 
 	// Accessors
 	inline const Vector2 & A(void) const { return m_a; }
@@ -62,6 +67,16 @@ public:
 	inline Quad & SetBCShrinked(bool shrinked) { m_bc = shrinked; return *this; }
 	inline Quad & SetCDShrinked(bool shrinked) { m_cd = shrinked; return *this; }
 	inline Quad & SetDAShrinked(bool shrinked) { m_da = shrinked; return *this; }
+
+	inline bool Contains(const Vector2 & rhs) const
+	{
+		return
+			CrossProduct(m_b - m_a, rhs - m_a) > 0.0 &&
+			CrossProduct(m_c - m_b, rhs - m_b) > 0.0 &&
+			CrossProduct(m_d - m_c, rhs - m_c) > 0.0 &&
+			CrossProduct(m_a - m_d, rhs - m_d) > 0.0;
+	}
+	bool Intersects(const Quad & rhs) const;
 
 private:
 

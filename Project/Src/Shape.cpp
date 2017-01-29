@@ -95,8 +95,8 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
             default:
                 break;
         }
-        std::cout << "Height level: " << height << std::endl;
-        std::cout << "current case: " << type << std::endl;
+        /*std::cout << "Height level: " << height << "\n";
+        std::cout << "current case: " << type << "\n";*/
         height++;
     }
 }
