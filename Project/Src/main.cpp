@@ -41,10 +41,10 @@ int main(int argc, char **argv)
 	Random::Seed(0);
 	Quad q(Random::NextUInt64(), Vector2(-5000, 5000), Vector2(-5000, -5000), Vector2(5000, -5000), Vector2(5000, 5000));
 
-	Object obj("Output/test.obj");
-	q.Subdivide(obj);
-	//BuildingSetting s = Setting::GetInstance(q.A());
-	//q.BuildTerrain (obj, s);
+    Object obj("Output/test.obj");
+	//q.Subdivide(obj);
+    BuildingSetting s = Setting::GetInstance(q.A());
+    q.BuildTerrain (obj, s);
 
 	std::cout << "Complete" << std::endl;
 	getchar();

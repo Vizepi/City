@@ -529,6 +529,7 @@ void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, doubl
 	m_d = Line::Intersection(cd, da);
 }
 
+<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
 Quad Quad::GetInscribedRectangle(void) const
 {
 	Line ab_cd = Line(m_a + (m_b - m_a) / 2.0, m_c + (m_d - m_c) / 2.0);
@@ -682,17 +683,36 @@ bool Quad::Intersects(const Quad & rhs) const
 }
 
 void Quad::DrawBuildingGround(Object & obj, BuildingSetting & setting)
+=======
+void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting, int height)
+>>>>>>> Add height parameter on shapes.
 {
+     obj.WriteQuadFloor(this, setting, height);
 }
 
+<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
 void Quad::DrawBuildingFloor(Object & obj, BuildingSetting & setting)
+=======
+void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height)
+>>>>>>> Add height parameter on shapes.
 {
+     obj.WriteQuadFloor(this, setting, height);
 }
 
+<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
 void Quad::DrawBuildingRoof(Object & obj, BuildingSetting & setting)
+=======
+void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height)
+>>>>>>> Add height parameter on shapes.
 {
+     obj.WriteQuadRoof(this, setting, height);
 }
 
+<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
 void Quad::DrawEmptySpace(Object & obj, BuildingSetting & setting)
+=======
+void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting, int height)
+>>>>>>> Add height parameter on shapes.
 {
+     obj.WriteQuadEmptySpace(this, setting, height);
 }

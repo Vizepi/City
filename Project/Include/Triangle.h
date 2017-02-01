@@ -22,10 +22,10 @@ public:
 	virtual void Subdivide(Object & obj);
 	virtual void BuildNeighborhood(Object & obj, BuildingSetting& setting);
 
-    void DrawBuildingGround (Object & obj, BuildingSetting & setting);
-    void DrawBuildingFloor  (Object & obj, BuildingSetting & setting);
-    void DrawBuildingRoof   (Object & obj, BuildingSetting & setting);
-    void DrawEmptySpace     (Object & obj, BuildingSetting & setting);
+    void DrawBuildingGround (Object & obj, BuildingSetting & setting, int height);
+    void DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height);
+    void DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height);
+    void DrawEmptySpace     (Object & obj, BuildingSetting & setting, int height);
 
 	inline virtual double Area(void) const
 	{

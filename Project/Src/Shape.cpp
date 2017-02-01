@@ -72,7 +72,7 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
         {
             case GROUND:
             {
-                DrawBuildingGround(obj, setting);
+                DrawBuildingGround(obj, setting, height);
                 //obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
                 type = BuildGroundLevel (height, setting);
 
@@ -80,15 +80,15 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
             }
             case FLOOR:
             {
-                DrawBuildingFloor(obj, setting);
+                DrawBuildingFloor(obj, setting, height);
                 // Shrink shape
-                DrawBuildingFloor(obj, setting);
+                DrawBuildingFloor(obj, setting, height);
                 type = BuildFloorLevel (height, setting);
 
                 break;
             }
             case ROOF:
-                DrawBuildingRoof(obj, setting);
+                DrawBuildingRoof(obj, setting, height);
                 type = END;
 
             case END:
@@ -104,7 +104,7 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
 {
     // Fill with trees/bushes/whatever
-    DrawEmptySpace(obj, setting);
+    DrawEmptySpace(obj, setting, 0);
 }
 
 void Shape::BuildTerrain(Object &obj, BuildingSetting & setting)
