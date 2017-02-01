@@ -82,7 +82,7 @@ int Triangle::GetSubdivisionType(void) const
 	{
 		currentType++;
 		size -= types[currentType].size;
-	} while (size >= 0.0 && currentType < types.size() - 1);
+	} while (size >= 0.0 && currentType < (int)types.size() - 1);
 	return types[currentType].type;
 }
 

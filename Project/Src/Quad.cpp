@@ -64,7 +64,7 @@ int Quad::GetSubdivisionType(void) const
 	{
 		currentType++;
 		size -= types[currentType].size;
-	} while (size >= 0.0 && currentType < types.size() - 1);
+	} while (size >= 0.0 && currentType < (int)types.size() - 1);
 	return types[currentType].type;
 }
 
@@ -682,37 +682,22 @@ bool Quad::Intersects(const Quad & rhs) const
 	return false;
 }
 
-void Quad::DrawBuildingGround(Object & obj, BuildingSetting & setting)
-=======
+
 void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting, int height)
->>>>>>> Add height parameter on shapes.
 {
      obj.WriteQuadFloor(this, setting, height);
 }
-
-<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
-void Quad::DrawBuildingFloor(Object & obj, BuildingSetting & setting)
-=======
 void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height)
->>>>>>> Add height parameter on shapes.
 {
      obj.WriteQuadFloor(this, setting, height);
 }
 
-<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
-void Quad::DrawBuildingRoof(Object & obj, BuildingSetting & setting)
-=======
 void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height)
->>>>>>> Add height parameter on shapes.
 {
      obj.WriteQuadRoof(this, setting, height);
 }
 
-<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
-void Quad::DrawEmptySpace(Object & obj, BuildingSetting & setting)
-=======
 void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting, int height)
->>>>>>> Add height parameter on shapes.
 {
      obj.WriteQuadEmptySpace(this, setting, height);
 }
