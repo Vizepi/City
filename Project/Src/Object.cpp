@@ -170,7 +170,22 @@ void Object::WriteQuadRoof(const Quad & q, BuildingSetting bs, int height)
 
 void Object::WriteTriangleRoof(const Triangle & t, BuildingSetting bs, int height)
 {
+    float border = bs.FloorSpaceSize * 10;
+    Triangle tShrinked = Triangle(t);
+    tShrinked.Shrink(border);
 
+    Quad sideTriangles[3];
+    sideTriangles[0] = Quad(t.A(), t.B(), tShrinked.B(), tShrinked.A());
+    sideTriangles[1] = Quad(t.B(), t.C(), tShrinked.C(), tShrinked.B());
+    sideTriangles[2] = Quad(t.C(), t.A(), tShrinked.A(), tShrinked.C());
+
+    for (short i = 0; i < 3; ++i)
+    {
+        WriteQuadBox(sideTriangles[i], sideTriangles[i],
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            height * (bs.FloorSize + bs.FloorSpaceSize) + border,
+            true, false);
+    }
 }
 
 void Object::WriteQuadEmptySpace(const Quad & q, BuildingSetting bs, int height)
