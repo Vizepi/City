@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Random.h>
+
 #include <vector>
 #include <Setting.h>
 
@@ -15,6 +17,14 @@ public:
 	virtual void BuildNeighborhood(Object & obj, BuildingSetting& setting) = 0;
 
 	virtual double Area(void) const = 0;
+	inline static bool GetPeakChance(double area, const BuildingSetting& s)
+	{
+		return 0.01 * Random::NextDouble() * (area * area * 5.0 - s.Size.Min * s.Size.Min) / ((s.Size.Max * s.Size.Max) - (s.Size.Min * s.Size.Min)) < s.PeakProbability;
+	}
+	inline static int Shuffler(int i)
+	{
+		return Random::NextInt64(0, i - 1);
+	}
 
 	virtual void BuildBuilding          (Object &obj, BuildingSetting & setting);
 	virtual void BuildEmptySpace        (Object &obj, BuildingSetting & setting);

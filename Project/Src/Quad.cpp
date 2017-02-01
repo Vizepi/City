@@ -73,16 +73,7 @@ void Quad::Subdivide(Object & obj)
 	Random::Seed(m_seed);
 	double area = Area();
 	uint64_t type = GetSubdivisionType();
-	BuildingSetting sA = Setting::GetInstance(m_a);
-	BuildingSetting sB = Setting::GetInstance(m_b);
-	BuildingSetting sC = Setting::GetInstance(m_c);
-	BuildingSetting sD = Setting::GetInstance(m_d);
 	BuildingSetting setting = Setting::GetInstance(Center());
-
-	if ((sA.Height.Max + sB.Height.Max + sC.Height.Max + sD.Height.Max + setting.Height.Max) <= 2.0)
-	{
-		return;
-	}
 
 	double stopChance =
 		area > (Setting::MaxNeighborhoodSize * Setting::MaxNeighborhoodSize) ?
@@ -94,7 +85,6 @@ void Quad::Subdivide(Object & obj)
 
 	if (stopChance < Random::NextDouble())
 	{
-		Quad q = GetInscribedRectangle();
 		//BuildNeighborhood(obj);
 		if (setting.Height.Max > 0.0)
 		{
@@ -243,11 +233,6 @@ void Quad::Subdivide(Object & obj)
 	}
 }
 
-int Shuffler(int i)
-{
-	return Random::NextInt64(0, i - 1);
-}
-
 void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 {
 	Random::Seed(m_seed);
@@ -276,7 +261,6 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		BuildBuilding(obj, setting);
 		Quad q = GetInscribedSquare();
 		obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
-		std::cout << "\t\tPeak: " << (q.A() - q.B()).Length() << "\n";
 	}
 	break;
 	case QUAD_NEIGHBORHOOD_NEIGHBORHOOD:
@@ -330,66 +314,37 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			Line::Intersection(tD_A, tD_C),
 			Line::Intersection(tD_C, Line(m_d, m_c)));
 
-		std::vector<Quad*> neighborhood;
+		std::vector<Quad> neighborhood;
 
 		if (cornerA.IsWellFormed())
 		{
-			neighborhood.push_back(&cornerA);
-			if (GetPeakChance(cornerA.Area(), setting))
-			{
-				obj.WriteQuadBox(cornerA, cornerA, 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
-			}
-			else
-			{
-				obj.WriteQuadBox(cornerA, cornerA, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
-			}
+			neighborhood.push_back(cornerA);
 		}
 		if (cornerB.IsWellFormed())
 		{
-			neighborhood.push_back(&cornerB);
-			if (GetPeakChance(cornerB.Area(), setting))
-			{
-				obj.WriteQuadBox(cornerB, cornerB, 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
-			}
-			else
-			{
-				obj.WriteQuadBox(cornerB, cornerB, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
-			}
+			neighborhood.push_back(cornerB);
 		}
 		if (cornerC.IsWellFormed())
 		{
-			neighborhood.push_back(&cornerC);
-			if (GetPeakChance(cornerC.Area(), setting))
-			{
-				obj.WriteQuadBox(cornerC, cornerC, 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
-			}
-			else
-			{
-				obj.WriteQuadBox(cornerC, cornerC, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
-			}
+			neighborhood.push_back(cornerC);
 		}
 		if (cornerD.IsWellFormed())
 		{
-			neighborhood.push_back(&cornerD);
-			if (GetPeakChance(cornerD.Area(), setting))
-			{
-				obj.WriteQuadBox(cornerD, cornerD, 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
-			}
-			else
-			{
-				obj.WriteQuadBox(cornerD, cornerD, 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
-			}
+			neighborhood.push_back(cornerD);
 		}
 
 		const Vector2 * as[4] = { &(cornerA.B()), &(cornerB.B()), &(cornerC.B()), &(cornerD.B()) };
 		const Vector2 * bs[4] = { &(cornerB.D()), &(cornerC.D()), &(cornerD.D()), &(cornerA.D()) };
-		const Vector2 * a, *b;
+		const Vector2 * a, * b;
 
 
 		for (uint64_t i = 0; i < 4; ++i)
 		{
 			a = as[i];
 			b = bs[i];
+			Vector2 direction(*b - *a);
+			direction.Normalize();
+			Vector2 ortho = direction.Orthogonal();
 
 			double N = (*b - *a).Length();
 			uint64_t buildingCount = 0;
@@ -423,7 +378,54 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			// Positives are buildings, negatives are gaps
 
 			// Add buildings
-			double currentPosition;
+			double currentPosition = 0.0;
+			for (uint64_t j = 0; j < sizes.size(); ++j)
+			{
+				if (sizes[j] > 0.0)
+				{
+					Quad newBuilding = Quad(
+						*a + direction * currentPosition, 
+						*a + direction * (currentPosition + sizes[j]),
+						*a + direction * (currentPosition + sizes[j]) + ortho * sizes[j] * 0.7,
+						*a + direction * (currentPosition) + ortho * sizes[j] * 0.7);
+						neighborhood.push_back(newBuilding);
+				}
+				currentPosition += fabs(sizes[j]);
+			}
+		}
+
+		for (int64_t i = neighborhood.size() - 1; i >= 0; --i)
+		{
+			for (int64_t j = i - 1; j >= 0; --j)
+			{
+				if (neighborhood[i].Intersects(neighborhood[j]))
+				{
+					if (neighborhood[i].Area() > neighborhood[j].Area())
+					{
+						neighborhood.erase(neighborhood.begin() + j);
+						i = neighborhood.size() - 1;
+						j = i - 1;
+					}
+					else
+					{
+						neighborhood.erase(neighborhood.begin() + i);
+						i = neighborhood.size() - 1;
+						j = i - 1;
+					}
+				}
+			}
+		}
+
+		for (uint64_t i = 0; i < neighborhood.size(); ++i)
+		{
+			if (GetPeakChance(neighborhood[i].Area(), setting))
+			{
+				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
 		}
 
 	}
@@ -434,81 +436,6 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	}
 	break;
 	}
-	/*
-	//--------------
-	// V0 - 1 Building
-	//--------------
-	if (0 == type)
-	{
-		BuildTerrain(obj, setting);
-	}
-
-	//--------------
-	// V1 - 1 Building + shrink
-	//--------------
-	else if (1 == type)
-	{
-		Shrink(SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE);
-		BuildTerrain(obj, setting);
-	}
-	//--------------
-	// V2 - Neighborhood
-	//--------------
-	else if (2 == type)
-	{
-		Quad innerQuad(*this);
-		innerQuad.Shrink(SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE, SIDEWALK_SIZE);
-
-		//
-		// Bat 1
-		Vector2 a = m_a;
-		Vector2 b = Projection(Vector2(innerQuad.A() - m_a), Vector2(m_b - m_a)); // innerQuad.A() on m_a m_b
-		Vector2 c = innerQuad.A();
-		Vector2 d = Projection(Vector2(innerQuad.A() - m_a), Vector2(m_d - m_a));
-		innerQuad.BuildTerrain(obj, setting);
-	}*/
-
-	//
-	// Random seed
-	/*random::seed(m_seed);
-
-	//
-	// Attributs
-	//double MaxQuadBuildingSize = 75.0;
-	//double MinQuadBuildingSize = 20.0;
-
-	Setting::GetINstance(VEC2
-
-	bool isWellFormed = true;
-
-	//
-	// Check space for buildings
-	double ab = (m_a - m_b).Length();
-	double bc = (m_b - m_c).Length();
-	double cd = (m_c - m_d).Length();
-	double da = (m_d - m_a).Length();
-	if(ab < MinQuadBuildingSize
-		|| bc < MinQuadBuildingSize
-		|| cd < MinQuadBuildingSize
-		|| da < MinQuadBuildingSize)
-	{
-		isWellFormed = false;
-	}
-
-	//
-	// Divide Neighborhood ans build buildings
-	if(isWellFormed)
-	{
-		uint64_t nbBatAB = ab / MinQuadBuildingSize;
-		if(ab > 2.0*MinQuadBuildingSize)
-		{
-
-		}
-		while(crtLength < ab)
-		{
-
-		}
-	}*/
 }
 
 void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA)
