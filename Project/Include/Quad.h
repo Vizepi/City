@@ -19,8 +19,11 @@ public:
 	int GetSubdivisionType(void) const;
 
 	virtual void Subdivide(Object & obj);
-	virtual void BuildNeighborhood(Object & obj, BuildingSetting& setting);
+	virtual void BuildNeighborhood(Object & obj, BuildingSetting & setting);
+    void BuildBuildingRotation(Object & obj, BuildingSetting & setting);
 
+    void DrawBuildingGroundRotation (Object & obj, BuildingSetting & setting);
+    void DrawBuildingFloorRotation  (Object & obj, BuildingSetting & setting, int height);
     void DrawBuildingGround (Object & obj, BuildingSetting & setting);
     void DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height);
     void DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height);

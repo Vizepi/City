@@ -3,50 +3,35 @@
 #include <iostream>
 #include <Object.h>
 
-enum TerrainType
+Shape::FloorType Shape::BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
 {
-    NONE,
-    BUILDING
-};
-
-enum FloorType
-{
-    GROUND,
-    NO_BUILDING,
-    FLOOR,
-    ROOF,
-    END
-};
-
-FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
-{
-    FloorType type;
-    double r = Random::NextDouble ();
+    Shape::FloorType type;
+    double r = Random::NextDouble();
 
     if (height * (setting.FloorSize + setting.FloorSpaceSize) <= setting.Height.Max)
     {
-        type = (r < 0.95) ? FLOOR : ROOF;
+        type = (r < 0.95) ? Shape::FLOOR : Shape::ROOF;
     }
     else
     {
-        type = ROOF;
+        type = Shape::ROOF;
     }
 
     return type;
 }
 
-FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
+Shape::FloorType Shape::BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
 {
-    FloorType type;
-    double r = Random::NextDouble ();
+    Shape::FloorType type;
+    double r = Random::NextDouble();
 
     if (height * (setting.FloorSize + setting.FloorSpaceSize) <= setting.Height.Max)
     {
-        type = (r < 0.95) ? FLOOR : ROOF;
+        type = (r < 0.95) ? Shape::FLOOR : Shape::ROOF;
     }
     else
     {
-        type = ROOF;
+        type = Shape::ROOF;
     }
 
     return type;
@@ -54,30 +39,29 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
 
 void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 {
-    //Random::Seed(m_seed);
     uint32_t height = 0;
-    FloorType type = GROUND;
+    Shape::FloorType type = Shape::GROUND;
 
-    while (type != END)
+    while (type != Shape::END)
     {
         switch (type)
         {
-            case GROUND:
+            case Shape::GROUND:
                 DrawBuildingGround(obj, setting);
                 type = BuildGroundLevel (height, setting);
 
                 break;
-            case FLOOR:
+            case Shape::FLOOR:
                 DrawBuildingFloor(obj, setting, height);
                 type = BuildFloorLevel (height, setting);
 
                 break;
-            case ROOF:
+            case Shape::ROOF:
                 DrawBuildingRoof(obj, setting, height);
-                type = END;
+                type = Shape::END;
 
                 break;
-            case END:
+            case Shape::END:
                 break;
             default:
                 break;
@@ -88,6 +72,5 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 
 void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
 {
-    // Fill with trees/bushes/whatever
     DrawEmptySpace(obj, setting, 0);
 }

@@ -444,6 +444,39 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	}
 }
 
+void Quad::BuildBuildingRotation(Object &obj, BuildingSetting & setting)
+{
+    uint32_t height = 0;
+    Shape::FloorType type = Shape::GROUND;
+
+    while (type != Shape::END)
+    {
+        switch (type)
+        {
+            case Shape::GROUND:
+                DrawBuildingGroundRotation(obj, setting);
+                type = Shape::BuildGroundLevel (height, setting);
+
+                break;
+            case Shape::FLOOR:
+                DrawBuildingFloorRotation(obj, setting, height);
+                type = Shape::BuildFloorLevel (height, setting);
+
+                break;
+            case Shape::ROOF:
+                DrawBuildingRoof(obj, setting, height);
+                type = Shape::END;
+
+                break;
+            case Shape::END:
+                break;
+            default:
+                break;
+        }
+        height++;
+    }
+}
+
 void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA)
 {
 	Line ab(m_a, m_b);
@@ -658,6 +691,16 @@ void Quad::Rotate(double angle)
 	d.SetX(cos(alpha));
 	d.SetY(sin(alpha));
 	m_d = c + d * l;
+}
+
+void Quad::DrawBuildingGroundRotation (Object & obj, BuildingSetting & setting)
+{
+     obj.WriteQuadGroundRotation(*this, setting);
+}
+
+void Quad::DrawBuildingFloorRotation (Object & obj, BuildingSetting & setting, int height)
+{
+     obj.WriteQuadFloorRotation(*this, setting, height);
 }
 
 void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)

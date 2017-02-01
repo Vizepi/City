@@ -19,9 +19,11 @@ public:
     void WriteTriangleBox        (const Triangle & t1, const Triangle & t2, double heightMin, double heightMax, bool fillTop, bool fillBottom);
 
     void WriteQuadGround         (const Quad & q,     BuildingSetting bs);
+    void WriteQuadGroundRotation (Quad & q,     BuildingSetting bs);
     void WriteTriangleGround     (const Triangle & t, BuildingSetting bs);
 
     void WriteQuadFloor          (const Quad & q,     BuildingSetting bs, int height);
+    void WriteQuadFloorRotation  (Quad & q,     BuildingSetting bs, int height);
     void WriteTriangleFloor      (const Triangle & t, BuildingSetting bs, int height);
 
     void WriteQuadRoof           (const Quad & q,     BuildingSetting bs, int height);

@@ -10,6 +10,21 @@ class Object;
 class Shape
 {
 public:
+    enum TerrainType
+    {
+        NONE,
+        BUILDING
+    };
+
+    enum FloorType
+    {
+        GROUND,
+        NO_BUILDING,
+        FLOOR,
+        ROOF,
+        END
+    };
+
 	inline Shape(void) : m_seed(0) {}
 	inline Shape(uint64_t seed) : m_seed(seed) {}
 	inline virtual ~Shape(void) {}
@@ -25,6 +40,10 @@ public:
 	{
 		return Random::NextInt64(0, i - 1);
 	}
+
+    FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting);
+    FloorType BuildFloorLevel (uint32_t height, const BuildingSetting & setting);
+
 
 	virtual void BuildBuilding          (Object &obj, BuildingSetting & setting);
 	virtual void BuildEmptySpace        (Object &obj, BuildingSetting & setting);
