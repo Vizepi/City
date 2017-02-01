@@ -19,7 +19,7 @@ public:
 	virtual double Area(void) const = 0;
 	inline static bool GetPeakChance(double area, const BuildingSetting& s)
 	{
-		return 0.01 * Random::NextDouble() * (area * area * 5.0 - s.Size.Min * s.Size.Min) / ((s.Size.Max * s.Size.Max) - (s.Size.Min * s.Size.Min)) < s.PeakProbability;
+		return 0.01 * Random::NextDouble() * (area * area * 3.0 - s.Size.Min * s.Size.Min) / ((s.Size.Max * s.Size.Max) - (s.Size.Min * s.Size.Min)) < s.PeakProbability;
 	}
 	inline static int Shuffler(int i)
 	{

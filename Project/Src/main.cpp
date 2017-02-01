@@ -5,6 +5,8 @@
 #include <Random.h>
 #include <Object.h>
 
+void Lyon();
+
 int main(int argc, char **argv)
 {
 	Setting::InfluencePointsCount = 5;
@@ -59,7 +61,7 @@ int main(int argc, char **argv)
 		{ { 15.0, 25.0 }, { 15.0, 30.0 }, { 60.0, 100.0 }, 30.0, 0.005, 4.8, 0.1 },
 		Vector2(2600.0, 2800.0),
 		2200.0 };*/
-	Setting::MaxNeighborhoodSize = 400.0;
+	/*Setting::MaxNeighborhoodSize = 400.0;
 
 	Random::Seed(0);
 	Quad q(Random::NextUInt64(), Vector2(-5000, 5000), Vector2(-5000, -5000), Vector2(5000, -5000), Vector2(5000, 5000));
@@ -68,7 +70,7 @@ int main(int argc, char **argv)
 	q.Subdivide(obj);
 
 	std::cout << "Complete" << std::endl;
-	getchar();
-
+	getchar();*/
+	Lyon();
 	return 0;
 }

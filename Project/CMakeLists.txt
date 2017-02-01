@@ -57,6 +57,7 @@ set(SOURCES
 	${SOURCES_OBJECT}
 	${SOURCES_SETTING}
 	Src/main.cpp
+	Src/Lyon.cpp
 )
 
 add_executable(City ${SOURCES})

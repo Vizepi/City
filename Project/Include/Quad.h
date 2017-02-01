@@ -73,6 +73,7 @@ public:
 			CrossProduct(m_a - m_d, rhs - m_d) > 0.0;
 	}
 	bool Intersects(const Quad & rhs) const;
+	void Rotate(double angle);
 
 private:
 

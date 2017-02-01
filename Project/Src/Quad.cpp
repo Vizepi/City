@@ -395,10 +395,11 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			}
 		}
 
-		for (int64_t i = neighborhood.size() - 1; i >= 0; --i)
+		for (int i = neighborhood.size() - 1; i >= 0; --i)
 		{
-			for (int64_t j = i - 1; j >= 0; --j)
+			for (int j = i - 1; j >= 0; --j)
 			{
+				int n = neighborhood.size();
 				if (neighborhood[i].Intersects(neighborhood[j]))
 				{
 					if (neighborhood[i].Area() > neighborhood[j].Area())
@@ -614,6 +615,50 @@ bool Quad::Intersects(const Quad & rhs) const
 	return false;
 }
 
+#ifndef M_PI
+#define M_PI 3.14159265359
+#endif
+
+void Quad::Rotate(double angle)
+{
+	Vector2 c = Center();
+
+	Vector2 d = (m_a - c);
+	double l = d.Length();
+	d.Normalize();
+	double alpha = atan2(d.Y(), d.X());
+	alpha += angle * M_PI / 180.0;
+	d.SetX(cos(alpha));
+	d.SetY(sin(alpha));
+	m_a = c + d * l;
+
+	d = (m_b - c);
+	l = d.Length();
+	d.Normalize();
+	alpha = atan2(d.Y(), d.X());
+	alpha += angle * M_PI / 180.0;
+	d.SetX(cos(alpha));
+	d.SetY(sin(alpha));
+	m_b = c + d * l;
+
+	d = (m_c - c);
+	l = d.Length();
+	d.Normalize();
+	alpha = atan2(d.Y(), d.X());
+	alpha += angle * M_PI / 180.0;
+	d.SetX(cos(alpha));
+	d.SetY(sin(alpha));
+	m_c = c + d * l;
+
+	d = (m_d - c);
+	l = d.Length();
+	d.Normalize();
+	alpha = atan2(d.Y(), d.X());
+	alpha += angle * M_PI / 180.0;
+	d.SetX(cos(alpha));
+	d.SetY(sin(alpha));
+	m_d = c + d * l;
+}
 
 void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
 {
