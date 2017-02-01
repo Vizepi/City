@@ -1,5 +1,4 @@
 #include <Object.h>
-#include <iostream>
 
 Object::Object(const std::string & filename)
     : m_obj(filename.c_str(), std::ios::out)
@@ -149,28 +148,125 @@ void Object::WriteTriangleFloor(const Triangle & t, BuildingSetting bs,
 
 void Object::WriteQuadRoof(const Quad & q, BuildingSetting bs, int height)
 {
-    float border = bs.FloorSpaceSize * 10;
-    Quad qShrinked = Quad(q);
-    qShrinked.Shrink(border);
+    double r = Random::NextDouble();
+    float roofFence = bs.FloorSpaceSize * 20;
 
-    Quad sideQuads[4];
-    sideQuads[0] = Quad(q.A(), q.B(), qShrinked.B(), qShrinked.A());
-    sideQuads[1] = Quad(q.B(), q.C(), qShrinked.C(), qShrinked.B());
-    sideQuads[2] = Quad(q.C(), q.D(), qShrinked.D(), qShrinked.C());
-    sideQuads[3] = Quad(q.D(), q.A(), qShrinked.A(), qShrinked.D());
-
-    for (short i = 0; i < 4; ++i)
+    if (r < 0.25)
     {
-        WriteQuadBox(sideQuads[i], sideQuads[i],
+        Quad qShrinked = Quad(q);
+        qShrinked.Shrink(roofFence);
+
+        Quad sideQuads[4];
+        sideQuads[0] = Quad(q.A(), q.B(), qShrinked.B(), qShrinked.A());
+        sideQuads[1] = Quad(q.B(), q.C(), qShrinked.C(), qShrinked.B());
+        sideQuads[2] = Quad(q.C(), q.D(), qShrinked.D(), qShrinked.C());
+        sideQuads[3] = Quad(q.D(), q.A(), qShrinked.A(), qShrinked.D());
+
+        for (short i = 0; i < 4; ++i)
+        {
+            WriteQuadBox(sideQuads[i], sideQuads[i],
+                height * (bs.FloorSize + bs.FloorSpaceSize),
+                height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+                true, false);
+        }
+    }
+    else if (r < 0.4)
+    {
+        float roofDiagonalOffset = bs.FloorSpaceSize * 150;
+
+        Quad qShrinkedBottom = Quad(q);
+        qShrinkedBottom.Shrink(roofFence);
+
+        Quad qShrinkedTop = Quad(qShrinkedBottom);
+        qShrinkedTop.Shrink(roofDiagonalOffset);
+
+        WriteQuadBox(qShrinkedBottom, qShrinkedTop,
             height * (bs.FloorSize + bs.FloorSpaceSize),
-            height * (bs.FloorSize + bs.FloorSpaceSize) + border,
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofDiagonalOffset,
             true, false);
+    }
+    else if (r < 0.7)
+    {
+        float roofGutter = bs.FloorSpaceSize * 30;
+        Quad qGrown = Quad(q);
+        qGrown.Shrink(-roofFence);
+
+        WriteQuadBox(qGrown, qGrown,
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+            true, true);
+    }
+    else
+    {
+        Vector2 centerQ = q.Center();
+        Quad centerQuad = Quad(centerQ, centerQ, centerQ, centerQ);
+
+        WriteQuadBox(q, centerQuad,
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            (height + 1) * (bs.FloorSize + bs.FloorSpaceSize),
+            true, true);
     }
 }
 
 void Object::WriteTriangleRoof(const Triangle & t, BuildingSetting bs, int height)
 {
+    double r = Random::NextDouble();
+    float roofFence = bs.FloorSpaceSize * 20;
 
+    if (r < 0.25)
+    {
+        Triangle tShrinked = Triangle(t);
+        tShrinked.Shrink(roofFence);
+
+        Quad sideQuads[3];
+        sideQuads[0] = Quad(t.A(), t.B(), tShrinked.B(), tShrinked.A());
+        sideQuads[1] = Quad(t.B(), t.C(), tShrinked.C(), tShrinked.B());
+        sideQuads[2] = Quad(t.C(), t.A(), tShrinked.A(), tShrinked.C());
+
+        for (short i = 0; i < 4; ++i)
+        {
+            WriteQuadBox(sideQuads[i], sideQuads[i],
+                height * (bs.FloorSize + bs.FloorSpaceSize),
+                height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+                true, false);
+        }
+    }
+    else if (r < 0.4)
+    {
+        float roofDiagonalOffset = bs.FloorSpaceSize * 150;
+
+        Triangle tShrinkedBottom = Triangle(t);
+        tShrinkedBottom.Shrink(roofFence);
+
+        Triangle tShrinkedTop = Triangle(tShrinkedBottom);
+        tShrinkedTop.Shrink(roofDiagonalOffset);
+
+        WriteTriangleBox(tShrinkedBottom, tShrinkedTop,
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofDiagonalOffset,
+            true, false);
+    }
+    else if (r < 0.7)
+    {
+        float roofGutter = bs.FloorSpaceSize * 30;
+        Triangle tGrown = Triangle(t);
+        tGrown.Shrink(-roofFence);
+
+        WriteTriangleBox(tGrown, tGrown,
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+            true, true);
+    }
+    else
+    {
+        Vector2 centerT = t.Center();
+        Triangle centerTriangle = Triangle(centerT, centerT, centerT);
+
+        WriteTriangleBox(t, centerTriangle,
+            height * (bs.FloorSize + bs.FloorSpaceSize),
+            (height + 1) * (bs.FloorSize + bs.FloorSpaceSize),
+            true, true);
+    }
 }
 
 void Object::WriteQuadEmptySpace(const Quad & q, BuildingSetting bs, int height)
