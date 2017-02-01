@@ -253,7 +253,7 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	{
 	case QUAD_NEIGHBORHOOD_PARK:
 	{
-		BuildTerrain(obj, setting);
+		BuildEmptySpace(obj, setting);
 	}
 	break;
 	case QUAD_NEIGHBORHOOD_BUILDING:

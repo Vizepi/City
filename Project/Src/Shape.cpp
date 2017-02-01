@@ -25,15 +25,15 @@ FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
 
     if (height <= setting.Height.Min)
     {
-        type = (r < 0.9) ? FLOOR : ROOF;
+        type = (r < 0.95) ? FLOOR : ROOF;
     }
-    else if (height >= setting.Height.Max)
+    else if (height <= setting.Height.Max)
     {
-        type = (r > 0.9) ? FLOOR : ROOF;
+        type = (r > 0.95) ? FLOOR : ROOF;
     }
     else
     {
-        type = (r < 0.8) ? FLOOR : ROOF;
+        type = ROOF;
     }
 
     return type;
@@ -42,19 +42,19 @@ FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
 FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
 {
     FloorType type;
-    double r = Random::NextDouble();
+    double r = Random::NextDouble ();
 
     if (height <= setting.Height.Min)
     {
-        type = (r < 0.9) ? FLOOR : ROOF;
+        type = (r < 0.95) ? FLOOR : ROOF;
     }
-    else if (height >= setting.Height.Max)
+    else if (height <= setting.Height.Max)
     {
-        type = (r < 0.1) ? FLOOR : ROOF;
+        type = (r > 0.95) ? FLOOR : ROOF;
     }
     else
     {
-        type = (r < 0.6) ? FLOOR : ROOF;
+        type = ROOF;
     }
 
     return type;
@@ -98,23 +98,4 @@ void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
 {
     // Fill with trees/bushes/whatever
     DrawEmptySpace(obj, setting, 0);
-}
-
-void Shape::BuildTerrain(Object &obj, BuildingSetting & setting)
-{
-    FloorType type = (Random::NextDouble() > setting.Height.Min) ? NO_BUILDING : GROUND;
-
-    switch (type)
-    {
-        case BUILDING:
-            BuildBuilding(obj, setting);
-
-            break;
-        case NONE:
-            BuildEmptySpace(obj, setting);
-
-            break;
-        default:
-            break;
-    }
 }

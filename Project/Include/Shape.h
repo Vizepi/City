@@ -28,7 +28,6 @@ public:
 
 	virtual void BuildBuilding          (Object &obj, BuildingSetting & setting);
 	virtual void BuildEmptySpace        (Object &obj, BuildingSetting & setting);
-	virtual void BuildTerrain           (Object &obj, BuildingSetting & setting);
 
     virtual void DrawBuildingGround     (Object & obj, BuildingSetting & setting) = 0;
     virtual void DrawBuildingFloor      (Object & obj, BuildingSetting & setting, int height) = 0;

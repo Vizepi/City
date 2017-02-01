@@ -302,7 +302,7 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	{
 	case TRIANGLE_NEIGHBORHOOD_PARK:
 	{
-		BuildTerrain(obj, setting);
+		BuildEmptySpace(obj, setting);
 	}
 	break;
 	case TRIANGLE_NEIGHBORHOOD_BUILDING:
@@ -323,12 +323,12 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		Vector2 oBC = (m_c - m_b).Orthogonal();
 		Vector2 oCA = (m_a - m_c).Orthogonal();
 
-		Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
-		Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
-		Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
-		Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
-		Line tC_A(Vector2(m_c), Vector2(m_c) + oCA);
-		Line tA_C(Vector2(m_a), Vector2(m_a) + oCA);
+		Line tA_B(m_a, m_a + oAB);
+		Line tB_A(m_b, m_b + oAB);
+		Line tB_C(m_b, m_b + oBC);
+		Line tC_B(m_c, m_c + oBC);
+		Line tC_A(m_c, m_c + oCA);
+		Line tA_C(m_a, m_a + oCA);
 
 		tA_B.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
 		tB_A.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
