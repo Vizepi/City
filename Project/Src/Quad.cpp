@@ -291,14 +291,14 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		Vector2 oCD = (m_d - m_c).Orthogonal();
 		Vector2 oDA = (m_a - m_d).Orthogonal();
 
-		Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
-		Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
-		Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
-		Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
-		Line tC_D(Vector2(m_c), Vector2(m_c) + oCD);
-		Line tD_C(Vector2(m_d), Vector2(m_d) + oCD);
-		Line tD_A(Vector2(m_d), Vector2(m_d) + oDA);
-		Line tA_D(Vector2(m_a), Vector2(m_a) + oDA);
+		Line tA_B(m_a, m_a + oAB);
+		Line tB_A(m_b, m_b + oAB);
+		Line tB_C(m_b, m_b + oBC);
+		Line tC_B(m_c, m_c + oBC);
+		Line tC_D(m_c, m_c + oCD);
+		Line tD_C(m_d, m_d + oCD);
+		Line tD_A(m_d, m_d + oDA);
+		Line tA_D(m_a, m_a + oDA);
 
 		tA_B.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
 		tB_A.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
@@ -529,7 +529,6 @@ void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, doubl
 	m_d = Line::Intersection(cd, da);
 }
 
-<<<<<<< 9c24736a1812e0082f1e165f248c938607667745
 Quad Quad::GetInscribedRectangle(void) const
 {
 	Line ab_cd = Line(m_a + (m_b - m_a) / 2.0, m_c + (m_d - m_c) / 2.0);
@@ -634,6 +633,7 @@ Quad Quad::GetInscribedSquare(void) const
 	}
 	return q;
 }
+
 bool Quad::IsWellFormed(void) const
 {
 	return
@@ -663,7 +663,7 @@ bool Quad::Intersects(const Quad & rhs) const
 		for (uint64_t i = 0; i < 4; ++i)
 		{
 			Vector2 v = Line::Intersection(a[i], b[j]);
-			if (isnan(v.X()) || isnan(v.Y()))
+			if (std::isnan(v.X()) || std::isnan(v.Y()))
 			{
 				continue;
 			}
@@ -683,21 +683,22 @@ bool Quad::Intersects(const Quad & rhs) const
 }
 
 
-void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting, int height)
+void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
 {
-     obj.WriteQuadFloor(this, setting, height);
-}
-void Quad::DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height)
-{
-     obj.WriteQuadFloor(this, setting, height);
+     obj.WriteQuadGround(*this, setting);
 }
 
-void Quad::DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height)
+void Quad::DrawBuildingFloor (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteQuadRoof(this, setting, height);
+     obj.WriteQuadFloor(*this, setting, height);
 }
 
-void Quad::DrawEmptySpace     (Object & obj, BuildingSetting & setting, int height)
+void Quad::DrawBuildingRoof (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteQuadEmptySpace(this, setting, height);
+     obj.WriteQuadRoof(*this, setting, height);
+}
+
+void Quad::DrawEmptySpace (Object & obj, BuildingSetting & setting, int height)
+{
+     obj.WriteQuadEmptySpace(*this, setting, height);
 }

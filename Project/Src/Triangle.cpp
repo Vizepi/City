@@ -305,22 +305,22 @@ void Triangle::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCA)
 	m_c = Line::Intersection(bc, ca);
 }
 
-void Triangle::DrawBuildingGround (Object & obj, BuildingSetting & setting, int height)
+void Triangle::DrawBuildingGround (Object & obj, BuildingSetting & setting)
 {
-     obj.WriteTriangleFloor(this, setting, height);
+     obj.WriteTriangleGround(*this, setting);
 }
 
 void Triangle::DrawBuildingFloor (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteTriangleFloor(this, setting, height);
+     obj.WriteTriangleFloor(*this, setting, height);
 }
 
 void Triangle::DrawBuildingRoof (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteTriangleRoof(this, setting, height);
+     obj.WriteTriangleRoof(*this, setting, height);
 }
 
 void Triangle::DrawEmptySpace (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteTriangleEmptySpace(this, setting, height);
+     obj.WriteTriangleEmptySpace(*this, setting, height);
 }

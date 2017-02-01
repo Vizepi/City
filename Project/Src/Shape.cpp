@@ -23,11 +23,11 @@ FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
     FloorType type;
     double r = Random::NextDouble ();
 
-    if (height < setting.Height.Min)
+    if (height <= setting.Height.Min)
     {
         type = (r < 0.9) ? FLOOR : ROOF;
     }
-    else if (height > setting.Height.Max)
+    else if (height >= setting.Height.Max)
     {
         type = (r > 0.9) ? FLOOR : ROOF;
     }
@@ -44,11 +44,11 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     FloorType type;
     double r = Random::NextDouble();
 
-    if (height < setting.Height.Min)
+    if (height <= setting.Height.Min)
     {
         type = (r < 0.9) ? FLOOR : ROOF;
     }
-    else if (height > setting.Height.Max)
+    else if (height >= setting.Height.Max)
     {
         type = (r < 0.1) ? FLOOR : ROOF;
     }
@@ -71,32 +71,25 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
         switch (type)
         {
             case GROUND:
-            {
-                DrawBuildingGround(obj, setting, height);
-                //obj.WriteQuadBox(this, this, 0, height * floorSize, true, false);
+                DrawBuildingGround(obj, setting);
                 type = BuildGroundLevel (height, setting);
 
                 break;
-            }
             case FLOOR:
-            {
-                DrawBuildingFloor(obj, setting, height);
-                // Shrink shape
                 DrawBuildingFloor(obj, setting, height);
                 type = BuildFloorLevel (height, setting);
 
                 break;
-            }
             case ROOF:
                 DrawBuildingRoof(obj, setting, height);
                 type = END;
 
+                break;
             case END:
+                break;
             default:
                 break;
         }
-        /*std::cout << "Height level: " << height << "\n";
-        std::cout << "current case: " << type << "\n";*/
         height++;
     }
 }
@@ -115,9 +108,12 @@ void Shape::BuildTerrain(Object &obj, BuildingSetting & setting)
     {
         case BUILDING:
             BuildBuilding(obj, setting);
+
             break;
         case NONE:
             BuildEmptySpace(obj, setting);
+
+            break;
         default:
             break;
     }

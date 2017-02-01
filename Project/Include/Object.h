@@ -12,17 +12,23 @@ public:
 	Object(const std::string & filename);
     ~Object();
 
-    void WriteQuadBox(const Quad & q1, const Quad & q2, double heightMin, double heightMax, bool fillTop, bool fillBottom);
-    void WriteTriangleBox(Triangle t1, Triangle t2, double heightMin, double heightMax, bool fillTop, bool fillBottom);
+    void WriteQuadPlane          (const Quad & q);
+    void WriteTrianglePlane      (const Triangle & t);
 
-    void WriteQuadFloor(Quad q, BuildingSetting bs, int height);
-    void WriteTriangleFloor(Triangle t, BuildingSetting bs, int height);
+    void WriteQuadBox            (const Quad & q1,     const Quad & q2,     double heightMin, double heightMax, bool fillTop, bool fillBottom);
+    void WriteTriangleBox        (const Triangle & t1, const Triangle & t2, double heightMin, double heightMax, bool fillTop, bool fillBottom);
 
-    void WriteQuadRoof(Quad q, BuildingSetting bs, int height);
-    void WriteTriangleRoof(Triangle t, BuildingSetting bs, int height);
+    void WriteQuadGround         (const Quad & q,     BuildingSetting bs);
+    void WriteTriangleGround     (const Triangle & t, BuildingSetting bs);
 
-    void WriteQuadEmptySpace(Quad q, BuildingSetting bs, int height);
-    void WriteTriangleEmptySpace(Triangle t, BuildingSetting bs, int height);
+    void WriteQuadFloor          (const Quad & q,     BuildingSetting bs, int height);
+    void WriteTriangleFloor      (const Triangle & t, BuildingSetting bs, int height);
+
+    void WriteQuadRoof           (const Quad & q,     BuildingSetting bs, int height);
+    void WriteTriangleRoof       (const Triangle & t, BuildingSetting bs, int height);
+
+    void WriteQuadEmptySpace     (const Quad & q,     BuildingSetting bs, int height);
+    void WriteTriangleEmptySpace (const Triangle & t, BuildingSetting bs, int height);
 
 	std::ofstream m_obj;
 };
