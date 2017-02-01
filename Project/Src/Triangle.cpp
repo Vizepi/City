@@ -4,6 +4,9 @@
 #include <Random.h>
 #include <Quad.h>
 
+#include <vector>
+#include <algorithm>
+
 #ifndef M_PI
 #define M_PI 3.14159265359
 #endif
@@ -15,6 +18,10 @@
 #define TRIANGLE_DIVIDE_QUAD_A	4
 #define TRIANGLE_DIVIDE_QUAD_B	5
 #define TRIANGLE_DIVIDE_QUAD_C	6
+
+#define TRIANGLE_NEIGHBORHOOD_PARK			0
+#define TRIANGLE_NEIGHBORHOOD_BUILDING		1
+#define TRIANGLE_NEIGHBORHOOD_NEIGHBORHOOD	2
 
 struct Type
 {
@@ -91,18 +98,27 @@ void Triangle::Subdivide(Object & obj)
 	Random::Seed(m_seed);
 	double area = Area();
 	uint64_t type = GetSubdivisionType();
+	BuildingSetting setting = Setting::GetInstance(Center());
 
-	double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
+	double stopChance =
+		area > (Setting::MaxNeighborhoodSize * Setting::MaxNeighborhoodSize) ?
+		1.0 :
+		Setting::Ease(
+			area,
+			setting.Neighborhood.Min * setting.Neighborhood.Min,
+			setting.Neighborhood.Max * setting.Neighborhood.Max);
+
+	//double stopChance = Setting::Ease(area, double(75ull * 75ull), double(300ull * 300ull));
 	if (stopChance < Random::NextDouble())
 	{
-		BuildingSetting s = Setting::GetInstance(Center());
-		//BuildNeighborhood(obj);
-		if(s.Height.Max > 0.0)
+		if(setting.Height.Max > 0.0)
 		{
 			obj.m_obj << "v " << m_a.X() << " " << m_a.Y() << " 0\n";
 			obj.m_obj << "v " << m_b.X() << " " << m_b.Y() << " 0\n";
 			obj.m_obj << "v " << m_c.X() << " " << m_c.Y() << " 0\n";
 			obj.m_obj << "f -3 -2 -1\n";
+			Shrink(SIDEWALK_SIZE);
+			BuildNeighborhood(obj, setting);
 		}
 	}
 	else
@@ -269,24 +285,191 @@ void Triangle::Subdivide(Object & obj)
 
 void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 {
-	uint64_t crtVersion = 1;
-	
-	//--------------
-	// V0 - 1 Building
-	//--------------
-	if(0 == crtVersion)
+	Random::Seed(m_seed);
+	uint64_t type = Random::NextDouble() < PARK_DENSITY ? TRIANGLE_NEIGHBORHOOD_PARK : TRIANGLE_NEIGHBORHOOD_NEIGHBORHOOD;
+
+	if (type != TRIANGLE_NEIGHBORHOOD_PARK)
+	{
+		if (setting.Size.Min * 2.0 >= (m_b - m_a).Length() ||
+			setting.Size.Min * 2.0 >= (m_c - m_b).Length() ||
+			setting.Size.Min * 2.0 >= (m_a - m_c).Length())
+		{
+			type = TRIANGLE_NEIGHBORHOOD_BUILDING;
+		}
+	}
+
+	switch (type)
+	{
+	case TRIANGLE_NEIGHBORHOOD_PARK:
 	{
 		BuildTerrain(obj, setting);
 	}
-
-	//--------------
-	// V1 - 1 Building + shrink
-	//--------------
-	else if(1 == crtVersion)
+	break;
+	case TRIANGLE_NEIGHBORHOOD_BUILDING:
 	{
-		double walkWaySize = 5.0;
-		Shrink(walkWaySize);
-		BuildTerrain(obj, setting);
+		BuildBuilding(obj, setting);
+		//Quad q = GetInscribedSquare();
+		//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+		obj.WriteTriangleBox(*this, *this, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+	}
+	break;
+	case TRIANGLE_NEIGHBORHOOD_NEIGHBORHOOD:
+	{
+		Vector2 AB(m_b - m_a);
+		Vector2 BC(m_c - m_b);
+		Vector2 CA(m_a - m_c);
+
+		Vector2 oAB = AB.Orthogonal();
+		Vector2 oBC = (m_c - m_b).Orthogonal();
+		Vector2 oCA = (m_a - m_c).Orthogonal();
+
+		Line tA_B(Vector2(m_a), Vector2(m_a) + oAB);
+		Line tB_A(Vector2(m_b), Vector2(m_b) + oAB);
+		Line tB_C(Vector2(m_b), Vector2(m_b) + oBC);
+		Line tC_B(Vector2(m_c), Vector2(m_c) + oBC);
+		Line tC_A(Vector2(m_c), Vector2(m_c) + oCA);
+		Line tA_C(Vector2(m_a), Vector2(m_a) + oCA);
+
+		tA_B.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
+		tB_A.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, AB.Length() / 2.0)));
+		tB_C.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, BC.Length() / 2.0)));
+		tC_B.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, BC.Length() / 2.0)));
+		tC_A.Translation(-Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, CA.Length() / 2.0)));
+		tA_C.Translation(Random::NextDouble(setting.Size.Min, fmin(setting.Size.Max, CA.Length() / 2.0)));
+
+		Quad cornerA(
+			m_a,
+			Line::Intersection(Line(m_a, m_b), tA_B),
+			Line::Intersection(tA_B, tA_C),
+			Line::Intersection(tA_C, Line(m_a, m_c)));
+		Quad cornerB(
+			m_b,
+			Line::Intersection(Line(m_b, m_c), tB_C),
+			Line::Intersection(tB_C, tB_A),
+			Line::Intersection(tB_A, Line(m_b, m_a)));
+		Quad cornerC(
+			m_c,
+			Line::Intersection(Line(m_c, m_a), tC_A),
+			Line::Intersection(tC_A, tC_B),
+			Line::Intersection(tC_B, Line(m_b, m_c)));
+
+		std::vector<Quad> neighborhood;
+
+		if (cornerA.IsWellFormed())
+		{
+			neighborhood.push_back(cornerA);
+		}
+		if (cornerB.IsWellFormed())
+		{
+			neighborhood.push_back(cornerB);
+		}
+		if (cornerC.IsWellFormed())
+		{
+			neighborhood.push_back(cornerC);
+		}
+
+		const Vector2 * as[3] = { &(cornerA.B()), &(cornerB.B()), &(cornerC.B()) };
+		const Vector2 * bs[3] = { &(cornerB.D()), &(cornerC.D()), &(cornerA.D()) };
+		const Vector2 * a, *b;
+
+
+		for (uint64_t i = 0; i < 3; ++i)
+		{
+			a = as[i];
+			b = bs[i];
+			Vector2 direction(*b - *a);
+			direction.Normalize();
+			Vector2 ortho = direction.Orthogonal();
+
+			double N = (*b - *a).Length();
+			uint64_t buildingCount = 0;
+			std::vector<double> sizes;
+			for (;;)
+			{
+				if (N > setting.Size.Min + setting.Size.Max)
+				{
+					double size = Random::NextDouble(setting.Size.Min, setting.Size.Max);
+					sizes.push_back(size);
+					N -= size;
+				}
+				else if (N > setting.Size.Min)
+				{
+					double size = Random::NextDouble(setting.Size.Min, N);
+					sizes.push_back(size);
+					N -= size;
+				}
+				else
+				{
+					break;
+				}
+			}
+			uint64_t gapCount = sizes.size() + 1;
+			double gapSize = -N / gapCount;
+			for (uint64_t i = 0; i < gapCount; ++i)
+			{
+				sizes.push_back(gapSize);
+			}
+			std::random_shuffle(sizes.begin(), sizes.end(), Shuffler);
+			// Positives are buildings, negatives are gaps
+
+			// Add buildings
+			double currentPosition = 0.0;
+			for (uint64_t j = 0; j < sizes.size(); ++j)
+			{
+				if (sizes[j] > 0.0)
+				{
+					Quad newBuilding = Quad(
+						*a + direction * currentPosition,
+						*a + direction * (currentPosition + sizes[j]),
+						*a + direction * (currentPosition + sizes[j]) + ortho * sizes[j] * 0.7,
+						*a + direction * (currentPosition)+ortho * sizes[j] * 0.7);
+					neighborhood.push_back(newBuilding);
+				}
+				currentPosition += fabs(sizes[j]);
+			}
+		}
+
+		for (int64_t i = neighborhood.size() - 1; i >= 0; --i)
+		{
+			for (int64_t j = i - 1; j >= 0; --j)
+			{
+				if (neighborhood[i].Intersects(neighborhood[j]))
+				{
+					if (neighborhood[i].Area() > neighborhood[j].Area())
+					{
+						neighborhood.erase(neighborhood.begin() + j);
+						i = neighborhood.size() - 1;
+						j = i - 1;
+					}
+					else
+					{
+						neighborhood.erase(neighborhood.begin() + i);
+						i = neighborhood.size() - 1;
+						j = i - 1;
+					}
+				}
+			}
+		}
+
+		for (uint64_t i = 0; i < neighborhood.size(); ++i)
+		{
+			if (GetPeakChance(neighborhood[i].Area(), setting))
+			{
+				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
+			}
+			else
+			{
+				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+			}
+		}
+
+	}
+	break;
+	default:
+	{
+
+	}
+	break;
 	}
 }
 

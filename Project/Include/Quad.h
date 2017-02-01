@@ -42,10 +42,6 @@ public:
 	Quad GetInscribedRectangle(void) const;
 	Quad GetInscribedSquare(void) const;
 	bool IsWellFormed(void) const;
-	inline static bool GetPeakChance(double area, const BuildingSetting& s)
-	{
-		return 0.001 * Random::NextDouble() * (area * area - s.Size.Min * s.Size.Min) / ((s.Size.Max * s.Size.Max) - (s.Size.Min * s.Size.Min)) < s.PeakProbability;
-	}
 
 	// Accessors
 	inline const Vector2 & A(void) const { return m_a; }
