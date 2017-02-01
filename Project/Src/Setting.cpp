@@ -20,6 +20,8 @@
 	instance.Neighborhood.Max = 0.0;
 	instance.PeakSize = 0.0;
 	instance.PeakProbability = 0.0;
+	instance.FloorSize = 0.0;
+	instance.FloorSpaceSize = 0.0;
 	for (uint64_t nPoint = 0; nPoint < InfluencePointsCount; ++nPoint)
 	{
 		double radius = InfluencePoints[nPoint].radius;
@@ -38,6 +40,8 @@
 		instance.Neighborhood.Max += InfluencePoints[nPoint].setting.Neighborhood.Max * y + InfluencePoints[nPoint].border.Neighborhood.Max * z;
 		instance.PeakSize += InfluencePoints[nPoint].setting.PeakSize * y + InfluencePoints[nPoint].border.PeakSize * z;
 		instance.PeakProbability += InfluencePoints[nPoint].setting.PeakProbability * y + InfluencePoints[nPoint].border.PeakProbability * z;
+		instance.FloorSize = fmax(instance.FloorSize, InfluencePoints[nPoint].setting.FloorSize * y + InfluencePoints[nPoint].border.FloorSize * z);
+		instance.FloorSpaceSize = fmax(instance.FloorSpaceSize, InfluencePoints[nPoint].setting.FloorSpaceSize * y + InfluencePoints[nPoint].border.FloorSpaceSize * z);
 	}
 	return instance;
 }

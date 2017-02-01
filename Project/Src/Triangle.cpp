@@ -310,7 +310,7 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		BuildBuilding(obj, setting);
 		//Quad q = GetInscribedSquare();
 		//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
-		obj.WriteTriangleBox(*this, *this, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
+		//obj.WriteTriangleBox(*this, *this, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
 	}
 	break;
 	case TRIANGLE_NEIGHBORHOOD_NEIGHBORHOOD:
@@ -455,11 +455,15 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		{
 			if (GetPeakChance(neighborhood[i].Area(), setting))
 			{
-				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
+				BuildingSetting s = setting;
+				s.Height.Max = s.PeakSize;
+				neighborhood[i].BuildBuilding(obj, s);
+				//obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
 			}
 			else
 			{
-				obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
+				neighborhood[i].BuildBuilding(obj, setting);
+				//obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
 			}
 		}
 

@@ -23,13 +23,9 @@ FloorType BuildGroundLevel(uint32_t height, const BuildingSetting & setting)
     FloorType type;
     double r = Random::NextDouble ();
 
-    if (height <= setting.Height.Min)
+    if (height * (setting.FloorSize + setting.FloorSpaceSize) <= setting.Height.Max)
     {
         type = (r < 0.95) ? FLOOR : ROOF;
-    }
-    else if (height <= setting.Height.Max)
-    {
-        type = (r > 0.95) ? FLOOR : ROOF;
     }
     else
     {
@@ -44,13 +40,9 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
     FloorType type;
     double r = Random::NextDouble ();
 
-    if (height <= setting.Height.Min)
+    if (height * (setting.FloorSize + setting.FloorSpaceSize) <= setting.Height.Max)
     {
         type = (r < 0.95) ? FLOOR : ROOF;
-    }
-    else if (height <= setting.Height.Max)
-    {
-        type = (r > 0.95) ? FLOOR : ROOF;
     }
     else
     {
@@ -62,7 +54,7 @@ FloorType BuildFloorLevel(uint32_t height, const BuildingSetting & setting)
 
 void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
 {
-    Random::Seed(m_seed);
+    //Random::Seed(m_seed);
     uint32_t height = 0;
     FloorType type = GROUND;
 
