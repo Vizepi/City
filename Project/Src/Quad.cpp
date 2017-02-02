@@ -260,7 +260,9 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	{
 		//BuildBuilding(obj, setting);
 		Quad q = GetInscribedSquare();
-		q.BuildBuilding(obj, setting);
+		setting.Height.Min = setting.Height.Max;
+		setting.Height.Max = setting.PeakSize;
+		q.BuildBuildingRotation(obj, setting);
 		//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
 	}
 	break;
@@ -423,8 +425,10 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			if (GetPeakChance(neighborhood[i].Area(), setting))
 			{
 				BuildingSetting s = setting;
+				double m = s.Height.Max;
 				s.Height.Max = s.PeakSize;
 				neighborhood[i].BuildBuilding(obj, s);
+				s.Height.Max = m;
 				//obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
 			}
 			else
