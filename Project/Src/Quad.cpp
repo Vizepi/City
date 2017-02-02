@@ -477,6 +477,39 @@ void Quad::BuildBuildingRotation(Object &obj, BuildingSetting & setting)
     }
 }
 
+void Quad::BuildBuildingShrink(Object &obj, BuildingSetting & setting)
+{
+    uint32_t height = 0;
+    Shape::FloorType type = Shape::GROUND;
+
+    while (type != Shape::END)
+    {
+        switch (type)
+        {
+            case Shape::GROUND:
+                DrawBuildingFloorShrink(obj, setting, 0);
+                type = Shape::BuildGroundLevel (height, setting);
+
+                break;
+            case Shape::FLOOR:
+                DrawBuildingFloorShrink(obj, setting, height);
+                type = Shape::BuildFloorLevel (height, setting);
+
+                break;
+            case Shape::ROOF:
+                DrawBuildingRoof(obj, setting, height);
+                type = Shape::END;
+
+                break;
+            case Shape::END:
+                break;
+            default:
+                break;
+        }
+        height++;
+    }
+}
+
 void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA)
 {
 	Line ab(m_a, m_b);
@@ -693,9 +726,19 @@ void Quad::Rotate(double angle)
 	m_d = c + d * l;
 }
 
+void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+{
+     obj.WriteQuadGround(*this, setting);
+}
+
 void Quad::DrawBuildingGroundRotation (Object & obj, BuildingSetting & setting)
 {
      obj.WriteQuadGroundRotation(*this, setting);
+}
+
+void Quad::DrawBuildingFloor (Object & obj, BuildingSetting & setting, int height)
+{
+     obj.WriteQuadFloor(*this, setting, height);
 }
 
 void Quad::DrawBuildingFloorRotation (Object & obj, BuildingSetting & setting, int height)
@@ -703,14 +746,9 @@ void Quad::DrawBuildingFloorRotation (Object & obj, BuildingSetting & setting, i
      obj.WriteQuadFloorRotation(*this, setting, height);
 }
 
-void Quad::DrawBuildingGround (Object & obj, BuildingSetting & setting)
+void Quad::DrawBuildingFloorShrink (Object & obj, BuildingSetting & setting, int height)
 {
-     obj.WriteQuadGround(*this, setting);
-}
-
-void Quad::DrawBuildingFloor (Object & obj, BuildingSetting & setting, int height)
-{
-     obj.WriteQuadFloor(*this, setting, height);
+     obj.WriteQuadFloorShrink(*this, setting, height);
 }
 
 void Quad::DrawBuildingRoof (Object & obj, BuildingSetting & setting, int height)

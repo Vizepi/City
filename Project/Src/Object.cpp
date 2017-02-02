@@ -161,6 +161,19 @@ void Object::WriteQuadFloorRotation(Quad & q, BuildingSetting bs, int height)
     q = qRotation;
 }
 
+void Object::WriteQuadFloorShrink(Quad & q, BuildingSetting bs, int height)
+{
+    Quad qShrinked = Quad(q);
+    qShrinked.Shrink(bs.FloorSpaceSize * 10);
+
+    WriteQuadBox(q, qShrinked,
+        height * (bs.FloorSize + bs.FloorSpaceSize),
+        (height + 1) * (bs.FloorSize + bs.FloorSpaceSize),
+        true, false);
+
+    q = qShrinked;
+}
+
 void Object::WriteTriangleFloor(const Triangle & t, BuildingSetting bs,
                                 int height)
 {
