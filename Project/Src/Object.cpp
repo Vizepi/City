@@ -234,11 +234,11 @@ void Object::WriteQuadRoof(const Quad & q, BuildingSetting bs, int height)
     {
         float roofGutter = bs.FloorSpaceSize * 30;
         Quad qGrown = Quad(q);
-        qGrown.Shrink(-roofFence);
+        qGrown.Shrink(-roofGutter);
 
         WriteQuadBox(qGrown, qGrown,
             height * (bs.FloorSize + bs.FloorSpaceSize),
-            height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofGutter,
             true, true);
     }
     else
@@ -295,11 +295,11 @@ void Object::WriteTriangleRoof(const Triangle & t, BuildingSetting bs, int heigh
     {
         float roofGutter = bs.FloorSpaceSize * 30;
         Triangle tGrown = Triangle(t);
-        tGrown.Shrink(-roofFence);
+        tGrown.Shrink(-roofGutter);
 
         WriteTriangleBox(tGrown, tGrown,
             height * (bs.FloorSize + bs.FloorSpaceSize),
-            height * (bs.FloorSize + bs.FloorSpaceSize) + roofFence,
+            height * (bs.FloorSize + bs.FloorSpaceSize) + roofGutter,
             true, true);
     }
     else
@@ -314,12 +314,14 @@ void Object::WriteTriangleRoof(const Triangle & t, BuildingSetting bs, int heigh
     }
 }
 
-void Object::WriteQuadEmptySpace(const Quad & q, BuildingSetting bs, int height)
+void Object::WriteQuadEmptySpace(const Quad & q, int height)
 {
+    (void) height;
     WriteQuadPlane(q);
 }
 
-void Object::WriteTriangleEmptySpace(const Triangle & t, BuildingSetting bs, int height)
+void Object::WriteTriangleEmptySpace(const Triangle & t, int height)
 {
+    (void) height;
     WriteTrianglePlane(t);
 }

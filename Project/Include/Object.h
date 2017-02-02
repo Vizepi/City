@@ -30,8 +30,8 @@ public:
     void WriteQuadRoof           (const Quad & q,     BuildingSetting bs, int height);
     void WriteTriangleRoof       (const Triangle & t, BuildingSetting bs, int height);
 
-    void WriteQuadEmptySpace     (const Quad & q,     BuildingSetting bs, int height);
-    void WriteTriangleEmptySpace (const Triangle & t, BuildingSetting bs, int height);
+    void WriteQuadEmptySpace     (const Quad & q,     int height);
+    void WriteTriangleEmptySpace (const Triangle & t, int height);
 
 	std::ofstream m_obj;
 };

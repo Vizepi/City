@@ -253,14 +253,14 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	{
 	case QUAD_NEIGHBORHOOD_PARK:
 	{
-		BuildEmptySpace(obj, setting);
+		BuildEmptySpace(obj);
 	}
 	break;
 	case QUAD_NEIGHBORHOOD_BUILDING:
 	{
 		//BuildBuilding(obj, setting);
 		Quad q = GetInscribedSquare();
-		q.BuildBuilding(obj, setting);
+        BuildBuildingFromType(obj, setting);
 		//obj.WriteQuadBox(q, q, 0.0, Random::NextDouble(setting.Height.Max, setting.PeakSize), true, false);
 	}
 	break;
@@ -348,7 +348,6 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			Vector2 ortho = direction.Orthogonal();
 
 			double N = (*b - *a).Length();
-			uint64_t buildingCount = 0;
 			std::vector<double> sizes;
 			for (;;)
 			{
@@ -399,7 +398,6 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 		{
 			for (int j = i - 1; j >= 0; --j)
 			{
-				int n = neighborhood.size();
 				if (neighborhood[i].Intersects(neighborhood[j]))
 				{
 					if (neighborhood[i].Area() > neighborhood[j].Area())
@@ -424,12 +422,12 @@ void Quad::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			{
 				BuildingSetting s = setting;
 				s.Height.Max = s.PeakSize;
-				neighborhood[i].BuildBuilding(obj, s);
+				neighborhood[i].BuildBuildingFromType(obj, s);
 				//obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.PeakSize), true, false);
 			}
 			else
 			{
-				neighborhood[i].BuildBuilding(obj, setting);
+				neighborhood[i].BuildBuildingFromType(obj, setting);
 				//obj.WriteQuadBox(neighborhood[i], neighborhood[i], 0.0, Random::NextDouble(setting.Height.Min, setting.Height.Max), true, false);
 			}
 		}
@@ -509,6 +507,25 @@ void Quad::BuildBuildingShrink(Object &obj, BuildingSetting & setting)
         height++;
     }
 }
+
+void Quad::BuildBuildingFromType(Object &obj, BuildingSetting & setting)
+{
+    double r = Random::NextDouble();
+
+    if (r < 0.45)
+    {
+        BuildBuilding(obj, setting);
+    }
+    else if (0.95)
+    {
+        BuildBuildingRotation(obj, setting);
+    }
+    else
+    {
+        BuildBuildingShrink(obj, setting);
+    }
+}
+
 
 void Quad::Shrink(double roadSizeAB, double roadSizeBC, double roadSizeCD, double roadSizeDA)
 {
@@ -756,7 +773,7 @@ void Quad::DrawBuildingRoof (Object & obj, BuildingSetting & setting, int height
      obj.WriteQuadRoof(*this, setting, height);
 }
 
-void Quad::DrawEmptySpace (Object & obj, BuildingSetting & setting, int height)
+void Quad::DrawEmptySpace (Object & obj, int height)
 {
-     obj.WriteQuadEmptySpace(*this, setting, height);
+     obj.WriteQuadEmptySpace(*this, height);
 }
