@@ -302,7 +302,7 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 	{
 	case TRIANGLE_NEIGHBORHOOD_PARK:
 	{
-		BuildEmptySpace(obj, setting);
+		BuildEmptySpace(obj);
 	}
 	break;
 	case TRIANGLE_NEIGHBORHOOD_BUILDING:
@@ -382,7 +382,6 @@ void Triangle::BuildNeighborhood(Object & obj, BuildingSetting& setting)
 			Vector2 ortho = direction.Orthogonal();
 
 			double N = (*b - *a).Length();
-			uint64_t buildingCount = 0;
 			std::vector<double> sizes;
 			for (;;)
 			{
@@ -507,7 +506,7 @@ void Triangle::DrawBuildingRoof (Object & obj, BuildingSetting & setting, int he
      obj.WriteTriangleRoof(*this, setting, height);
 }
 
-void Triangle::DrawEmptySpace (Object & obj, BuildingSetting & setting, int height)
+void Triangle::DrawEmptySpace (Object & obj, int height)
 {
-     obj.WriteTriangleEmptySpace(*this, setting, height);
+     obj.WriteTriangleEmptySpace(*this, height);
 }

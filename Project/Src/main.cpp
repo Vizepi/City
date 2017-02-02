@@ -9,6 +9,7 @@ void Lyon();
 
 int main(int argc, char **argv)
 {
+    (void)argc; (void)argv;
 	Setting::InfluencePointsCount = 5;
 	
 	Setting::InfluencePoints[0] = {

@@ -70,7 +70,7 @@ void Shape::BuildBuilding(Object &obj, BuildingSetting & setting)
     }
 }
 
-void Shape::BuildEmptySpace(Object &obj, BuildingSetting & setting)
+void Shape::BuildEmptySpace(Object &obj)
 {
-    DrawEmptySpace(obj, setting, 0);
+    DrawEmptySpace(obj, 0);
 }

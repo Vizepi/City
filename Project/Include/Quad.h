@@ -18,10 +18,11 @@ public:
 
 	int GetSubdivisionType(void) const;
 
-	virtual void Subdivide(Object & obj);
-	virtual void BuildNeighborhood(Object & obj, BuildingSetting & setting);
-    void BuildBuildingRotation(Object & obj, BuildingSetting & setting);
-    void BuildBuildingShrink  (Object & obj, BuildingSetting & setting);
+	virtual void Subdivide          (Object & obj);
+	virtual void BuildNeighborhood  (Object & obj, BuildingSetting & setting);
+    void BuildBuildingRotation      (Object & obj, BuildingSetting & setting);
+    void BuildBuildingShrink        (Object & obj, BuildingSetting & setting);
+    void BuildBuildingFromType      (Object &obj,  BuildingSetting & setting);
 
     void DrawBuildingGround         (Object & obj, BuildingSetting & setting);
     void DrawBuildingGroundRotation (Object & obj, BuildingSetting & setting);
@@ -29,7 +30,7 @@ public:
     void DrawBuildingFloorRotation  (Object & obj, BuildingSetting & setting, int height);
     void DrawBuildingFloorShrink    (Object & obj, BuildingSetting & setting, int height);
     void DrawBuildingRoof           (Object & obj, BuildingSetting & setting, int height);
-    void DrawEmptySpace             (Object & obj, BuildingSetting & setting, int height);
+    void DrawEmptySpace             (Object & obj, int height);
 
 	inline virtual double Area(void) const
 	{

@@ -25,7 +25,7 @@ public:
     void DrawBuildingGround (Object & obj, BuildingSetting & setting);
     void DrawBuildingFloor  (Object & obj, BuildingSetting & setting, int height);
     void DrawBuildingRoof   (Object & obj, BuildingSetting & setting, int height);
-    void DrawEmptySpace     (Object & obj, BuildingSetting & setting, int height);
+    void DrawEmptySpace     (Object & obj, int height);
 
 	inline virtual double Area(void) const
 	{

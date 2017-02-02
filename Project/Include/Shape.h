@@ -46,12 +46,12 @@ public:
 
 
 	virtual void BuildBuilding          (Object &obj, BuildingSetting & setting);
-	virtual void BuildEmptySpace        (Object &obj, BuildingSetting & setting);
+	virtual void BuildEmptySpace        (Object &obj);
 
     virtual void DrawBuildingGround     (Object & obj, BuildingSetting & setting) = 0;
     virtual void DrawBuildingFloor      (Object & obj, BuildingSetting & setting, int height) = 0;
     virtual void DrawBuildingRoof       (Object & obj, BuildingSetting & setting, int height) = 0;
-    virtual void DrawEmptySpace         (Object & obj, BuildingSetting & setting, int height) = 0;
+    virtual void DrawEmptySpace         (Object & obj, int height) = 0;
 
 protected:
 	uint64_t m_seed;
