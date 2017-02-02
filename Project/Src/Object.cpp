@@ -112,7 +112,7 @@ void Object::WriteQuadGround(const Quad & q, BuildingSetting bs)
 void Object::WriteQuadGroundRotation(Quad & q, BuildingSetting bs)
 {
     Quad qRotation = q;
-    qRotation.Rotate(20);
+    qRotation.Rotate(10);
 
     WriteQuadBox(q, qRotation, 0, bs.FloorSize + bs.FloorSpaceSize, true, false);
 
@@ -146,7 +146,7 @@ void Object::WriteQuadFloorRotation(Quad & q, BuildingSetting bs, int height)
     qShrinked.Shrink(bs.FloorSpaceSize);
 
     Quad qRotation = q;
-    qRotation.Rotate(20);
+    qRotation.Rotate(10);
 
     WriteQuadBox(qShrinked, qShrinked,
         height * (bs.FloorSize + bs.FloorSpaceSize),
