@@ -79,8 +79,8 @@ void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double hMin,
     // Bottom faces
     if (fillBottom)
     {
-        m_obj << "f " << -6 << " " << -7 << " " << -8 << "\n";
-        m_obj << "f " << -6 << " " << -8 << " " << -7 << "\n";
+        m_obj << "f " << -8 << " " << -5 << " " << -6 << "\n";
+        m_obj << "f " << -8 << " " << -6 << " " << -7 << "\n";
     }
     // Top faces
     if (fillTop)
@@ -89,17 +89,17 @@ void Object::WriteQuadBox(const Quad & q1, const Quad & q2, double hMin,
         m_obj << "f " << -4 << " " << -2 << " " << -1 << "\n";
     }
     // Back face
-    m_obj << "f " << -7 << " " << -3 << " " << -2 << "\n";
-    m_obj << "f " << -7 << " " << -2 << " " << -6 << "\n";
+    m_obj << "f " << -7 << " " << -2 << " " << -3 << "\n";
+    m_obj << "f " << -7 << " " << -6 << " " << -2 << "\n";
     // Right face
-    m_obj << "f " << -6 << " " << -2 << " " << -1 << "\n";
-    m_obj << "f " << -6 << " " << -1 << " " << -5 << "\n";
+    m_obj << "f " << -6 << " " << -1 << " " << -2 << "\n";
+    m_obj << "f " << -6 << " " << -5 << " " << -1 << "\n";
     // Front face
-    m_obj << "f " << -5 << " " << -1 << " " << -4 << "\n";
-    m_obj << "f " << -5 << " " << -4 << " " << -8 << "\n";
+    m_obj << "f " << -5 << " " << -4 << " " << -1 << "\n";
+    m_obj << "f " << -5 << " " << -8 << " " << -4 << "\n";
     // Left face
-    m_obj << "f " << -8 << " " << -4 << " " << -3 << "\n";
-    m_obj << "f " << -8 << " " << -3 << " " << -7 << "\n";
+    m_obj << "f " << -8 << " " << -3 << " " << -4 << "\n";
+    m_obj << "f " << -8 << " " << -7 << " " << -3 << "\n";
 }
 
 void Object::WriteTriangleBox(const Triangle & t1, const Triangle & t2,
@@ -177,7 +177,6 @@ void Object::WriteQuadFloorRotation(Quad & q, BuildingSetting bs, int height)
     Quad qShrinked = Quad(q);
     qShrinked.Shrink(bs.FloorSpaceSize);
 
-
     WriteQuadBox(qShrinked, qShrinked,
         height * (bs.FloorSize + bs.FloorSpaceSize),
         height * (bs.FloorSize + bs.FloorSpaceSize) + bs.FloorSpaceSize,
@@ -188,6 +187,19 @@ void Object::WriteQuadFloorRotation(Quad & q, BuildingSetting bs, int height)
         (height + 1) * (bs.FloorSize + bs.FloorSpaceSize),
         true, true);
 
+}
+
+void Object::WriteQuadFloorShrink(Quad & q, BuildingSetting bs, int height)
+{
+    Quad qShrinked = Quad(q);
+    qShrinked.Shrink(bs.FloorSpaceSize * 10);
+
+    WriteQuadBox(q, qShrinked,
+        height * (bs.FloorSize + bs.FloorSpaceSize),
+        (height + 1) * (bs.FloorSize + bs.FloorSpaceSize),
+        true, false);
+
+    q = qShrinked;
 }
 
 void Object::WriteTriangleFloor(const Triangle & t, BuildingSetting bs,

@@ -24,6 +24,7 @@ public:
 
     void WriteQuadFloor          (const Quad & q,     BuildingSetting bs, int height);
     void WriteQuadFloorRotation  (Quad & q,     BuildingSetting bs, int height);
+    void WriteQuadFloorShrink    (Quad & q,     BuildingSetting bs, int height);
     void WriteTriangleFloor      (const Triangle & t, BuildingSetting bs, int height);
 
     void WriteQuadRoof           (const Quad & q,     BuildingSetting bs, int height);
